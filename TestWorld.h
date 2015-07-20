@@ -21,15 +21,13 @@ public:
 
   virtual void traceRay(Ray& ray, Rgb& outRgb, Object* srcList, int nSrc)
   {
-    std::cout << "WARNING: TestWorld traceRay not complete!\n"; //should test for each object (optimize later w/kd tree)
+    //TODO: should test for each object (optimize later w/kd tree or something similar)
     if (objects[0].isHitByRay(ray))
     {
-      std::cout << "Hit\n";
       objects[0].traceRay(ray, outRgb, srcList, 1);
     }
-    else
+    else /* Miss: */
     {
-      std::cout << "Miss\n";
     }
   }
 

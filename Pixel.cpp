@@ -40,7 +40,8 @@ void Image::getPixLoc(Vec3& pLoc, int wIdx, int hIdx)
 {
   /* Get the x,y,z location in the image corresponding to the pixel
   at "width" index wIdx and "height" index hIdx. */
-  std::cout << "WARNING: Image::getPixLoc currently only works for images in the x,y plane!"; //3d orientation not yet supported
+  
+  //TODO: 3d orientation not yet supported. Code assumes image is in x,y plane.
 
   pLoc.x = loc3.x + pWidth*wIdx;
   pLoc.y = loc3.y - pHeight*hIdx;
@@ -49,7 +50,7 @@ void Image::getPixLoc(Vec3& pLoc, int wIdx, int hIdx)
 
 Pixel* Image::getPix(int wIdx, int hIdx)
 {
-  return &pixels[hIdx*height + wIdx];
+  return &pixels[hIdx*width + wIdx];
 }
 
 void Image::exportBitmap(const char* fileName)

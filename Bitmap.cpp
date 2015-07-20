@@ -74,7 +74,9 @@ void writePixelsToBmp24(const char* fileName, Pixel* pixArray, int w, int h)
   writeBytes(fs, (uint32_t)info.importantcolors, 4);
 
   int y;
-  for (y = 0; y < h; y++)
+  /* Bitmap pixel order is start from bottom left of image, then left to right within a row, then row by row
+     towards the top of the image. */
+  for (y = h-1; y >= 0; y--)
   {
     int x;
     for (x = 0; x < w; x++)

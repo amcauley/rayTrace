@@ -9,15 +9,13 @@
 
 class Object {
   public:
-    /* Location of hitbox corner. */
+    /* Object location. */
     Vec3 loc3;
-    /* Hitbox dimensions extending along +x, +y, +z directions from corner. */
-    Vec3 dim3;
     /* HSV color for this object. */
     Rgb rgb;
 
     Object() {};
-    Object(Vec3&, Vec3&, Rgb&);
+    Object(Vec3&, Rgb&);
 
     virtual bool isHitByRay(Ray ray)
     {
@@ -31,38 +29,45 @@ class Object {
     }
 };
 
-class Cube : public Object {
+class Sphere : public Object {
   public:
-    Cube() {};
-    Cube(Vec3& a, Vec3& b, Rgb& c) : Object(a, b, c) {};
+    float rad;
+
+    Sphere() {};
+    Sphere(Vec3& a, float b, Rgb& c) : Object(a, c), rad(b) {};
 
     virtual bool isHitByRay(Ray ray)
     {
-      /* A cube is hit if the ray intersects the hitbox. */
-      std::cout << "WARNING: using bad hit detection as a temp hack!\n"; //TODO: proper hit detection using math, not stepping ray through space
-      {
-        Ray tempRay = ray;
+      /* Sphere/Ray intersection problem is quadratic. Check discriminant to see if they intersect. */
+      float xx, yy, zz;
 
-        int step;
-        for (step = 0; step < 100; step++)
-        {
-          if ( (tempRay.loc3.x >= loc3.x) && (tempRay.loc3.x <= (loc3.x + dim3.x)) &&
-               (tempRay.loc3.y >= loc3.y) && (tempRay.loc3.y <= (loc3.y + dim3.y)) &&
-               (tempRay.loc3.z >= loc3.z) && (tempRay.loc3.z <= (loc3.z + dim3.z)) )
-          {
-            return true;
-          }
-          tempRay.loc3.x += tempRay.vec3.x;
-          tempRay.loc3.y += tempRay.vec3.y;
-          tempRay.loc3.z += tempRay.vec3.z;
-        }
+      xx = ray.loc3.x - loc3.x;
+      yy = ray.loc3.y - loc3.y;
+      zz = ray.loc3.z - loc3.z;
+
+      float vx, vy, vz, aa, bb, cc;
+        
+      vx = ray.vec3.x;
+      vy = ray.vec3.y;
+      vz = ray.vec3.z;
+      aa = vx*vx + vy*vy + vz*vz;
+      bb = 2 * (xx*vx + yy*vy + zz*vz);
+      cc = xx*xx + yy*yy + zz*zz - rad*rad;
+
+      if (bb*bb - 4 * aa*cc >= 0)
+      {
+        return true;
+      }
+      else
+      {
         return false;
-      }     
+      }
+    
     }
 
     virtual void traceRay(Ray ray, Rgb& outRgb, Object* srcList, int nSrc)
     {
-      std::cout << "WARNING: only using object color as a temp hack!\n"; //TODO: should mix object color and incoming ray color based on incidence angle
+      //TODO: should mix object color and incoming ray color based on incidence angle
       outRgb = rgb;
     }
 

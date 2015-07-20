@@ -8,10 +8,10 @@
     Light source is a type of object.
 */
 
-class SimpleSource : public Cube {
+class SimpleSource : public Sphere {
   public:
     SimpleSource() {};
-    SimpleSource(Vec3& a, Vec3& b, Rgb& c) : Cube(a, b, c) {};
+    SimpleSource(Vec3& a, float b, Rgb& c) : Sphere(a, b, c) {};
 
     virtual void traceRay(Ray& ray, Rgb& outHsv, Object& srcList, int nSrc)
     {
