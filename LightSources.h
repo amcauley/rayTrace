@@ -13,11 +13,7 @@ class SimpleSource : public Sphere {
     SimpleSource() {};
     SimpleSource(Vec3& a, float b, Rgb& c) : Sphere(a, b, c) {};
 
-    virtual void traceRay(Ray& ray, Rgb& outHsv, Object& srcList, int nSrc)
-    {
-      /* For simple source, just return its color. Don't care about other sources. */
-      outHsv = rgb;
-    }
+    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc);
 };
 
 #endif //LIGHTSOURCES_H

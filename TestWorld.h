@@ -19,18 +19,8 @@ public:
 
   TestWorld(Object* objects, int nObj, Object* sources, int nSrc, Vec3& eye, Image* img);
 
-  virtual void traceRay(Ray& ray, Rgb& outRgb, Object* srcList, int nSrc)
-  {
-    //TODO: should test for each object (optimize later w/kd tree or something similar)
-    if (objects[0].isHitByRay(ray))
-    {
-      objects[0].traceRay(ray, outRgb, srcList, 1);
-    }
-    else /* Miss: */
-    {
-    }
-  }
-
+  virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc);
+  virtual void CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);
   void runTest(void);
 };
 
