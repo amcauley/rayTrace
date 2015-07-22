@@ -1,18 +1,6 @@
 #include "Pixel.h"
 #include "Bitmap.h"
 
-Rgb::Rgb()
-{
-  r = g = b = 0;
-}
-
-Rgb::Rgb(float ah, float as, float av)
-{
-  r = ah;
-  g = as;
-  b = av;
-}
-
 Pixel::Pixel(float ax, float ay, float az,
   float ah, float as, float av)
 {

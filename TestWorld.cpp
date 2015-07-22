@@ -56,8 +56,7 @@ void TestWorld::runTest(void)
   }
 }
 
-/* Triple pointer :( TODO: just set first element of array to NULL. Then we can use
-   pass an array of pointers as input, instead of a pointer to an array of pointers. */
+/* Triple pointer :( */
 void TestWorld::CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
 {
   /* Similar to checkRayHit. This takes an input ray and returns any objects this

@@ -13,8 +13,11 @@ class Vec3 {
     Vec3();
     Vec3(float a, float b, float c);
     float mag2(void);
+    float dot(const Vec3& b);
+    float getAngle(Vec3& b);
     Vec3 operator+ (const Vec3& b);
     Vec3 operator- (const Vec3& b);
+    Vec3 operator* (const float b);
     bool operator== (const Vec3& b);
     bool operator!= (const Vec3& b);
 };

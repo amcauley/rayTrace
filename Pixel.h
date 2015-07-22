@@ -2,15 +2,9 @@
 #ifndef PIXEL_H
 #define PIXEL_H
 
-#include "Vec3.h"
 #include <iostream>
-
-class Rgb {
-  public:
-    float r, g, b;
-    Rgb();
-    Rgb(float, float, float);
-};
+#include "Vec3.h"
+#include "Rgb.h"
 
 class Pixel {
   public:

@@ -7,4 +7,11 @@
    issues. */
 #define VEC3_EQ_FLOAT_TOLERANCE (1.0e-3)
 
+/* Strength of ambiant lighting contribution to object coloring. Fraction from 0.0f to 1.0f. */
+#define DEFAULT_AMBIANT_SCALE (0.2f)
+
+/* Misc Params. */
+/* Inlcude math defines such as */
+#define _USE_MATH_DEFINES
+
 #endif //PARAMS_H

@@ -1,6 +1,8 @@
-#include <math.h>
+
 #include <assert.h>
 #include "Object.h"
+#include "Params.h"
+#include <math.h> //should go after Params.h to get the benefit of _USE_MATH_DEFINES
 
 Object::Object(Vec3& loc, Rgb& color)
 {
@@ -51,27 +53,28 @@ void Sphere::checkRayHit(Ray ray, Vec3** hitPtr)
   if (dd >= 0)
   {
     float tt = (-bb - sqrt(dd)) / (2.0f*aa);
+    Vec3 tempVec;
 
-    if (tt <= 0)
+    (*hitPtr)->x = ray.loc3.x + ray.vec3.x*tt;
+    (*hitPtr)->y = ray.loc3.y + ray.vec3.y*tt;
+    (*hitPtr)->z = ray.loc3.z + ray.vec3.z*tt;
+
+    if ((tt <= 0) || ((**hitPtr) == ray.loc3))
     {
       tt = (-bb + sqrt(dd)) / (2.0f*aa);
-    }     
+    }
 
-    if (tt > 0)
+    (*hitPtr)->x = ray.loc3.x + ray.vec3.x*tt;
+    (*hitPtr)->y = ray.loc3.y + ray.vec3.y*tt;
+    (*hitPtr)->z = ray.loc3.z + ray.vec3.z*tt;
+
+    if ((tt > 0) && ((**hitPtr) != ray.loc3))
     {
-      (*hitPtr)->x = ray.loc3.x + ray.vec3.x*tt;
-      (*hitPtr)->y = ray.loc3.y + ray.vec3.y*tt;
-      (*hitPtr)->z = ray.loc3.z + ray.vec3.z*tt;
-    }
-    else
-    {
-      *hitPtr = NULL;
+      return;
     }
   }
-  else
-  {
-    *hitPtr = NULL;
-  }
+
+  *hitPtr = NULL;
 }
 
 void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc)
@@ -87,9 +90,8 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList
   /* Generate list of objects hit by the shadow ray and the coordinates of intersections. */
   callingObj.CheckRayHitExt(shadowRay, &objList, &objHitPts);
 
-  /* Default rgb is from the source. Overwrite w/0,0,0 if we detect that the source is blocked
-     by an object (including this object itself). */
-  srcList[0].traceRay(shadowRay, outRgb, callingObj, NULL, 0);
+  /* Default rgb to ambiant. */
+  outRgb = rgb*DEFAULT_AMBIANT_SCALE;
 
   if (objList != NULL)
   {
@@ -100,18 +102,43 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList
       /* While checking for occlusions, we'll disregard shadow ray intersections with
          current object itself if the intersection isn't different (within tolerances) 
          of the initial ray/object intersection. */
-      if ((currObjPtr != this) || (objHitPts[n] != ray.loc3))
+      if (currObjPtr != this)
       {
         Vec3 dist2Src = srcList[0].loc3 - ray.loc3;
         Vec3 dist2Obj = objHitPts[n] - ray.loc3;
         if (dist2Src.mag2() > dist2Obj.mag2())
         {
-          outRgb.b = outRgb.g = outRgb.r = 0.0f;
           return;
         }
       }
+      else /* Ray hit ourself */
+      {
+        return;
+      }
       currObjPtr = objList[++n];
-
     }
   }
+
+  /* No obstructions on the shadow ray. Calculate angle between normal vec and shadow
+  ray, then scale rgb intensity accordingly (closer to normal = more intense). Normal 
+  direction is from center of sphere to the impact ray intersection pt. Angle is in radians,
+  from 0 to Pi, but since we don't expect angles greater than Pi/2 (otherwise would have
+  occluded ourself), scale by ((Pi/2)-angle). */
+  float angle = shadowDir.getAngle(ray.loc3 - loc3);
+  float scale = 1.0f - (angle/M_PI_2);
+  //std::cout << "angle = " << angle << " scale = " << scale << "\n";
+
+  /* Due to float math, we might have a few boundary cases of negative scaling. Set them to
+     be occluded. */
+  if (scale < 0)
+  {
+    return;
+  }
+  else if (scale > 1.0f) /* Guard against rounding issues by clamping max scale factor. */
+  {
+    scale = 1.0f;
+  }
+  Rgb tempRgb;
+  srcList[0].traceRay(shadowRay, tempRgb, callingObj, NULL, 0);
+  outRgb = outRgb + tempRgb*((1.0f - DEFAULT_AMBIANT_SCALE)*scale);
 }
