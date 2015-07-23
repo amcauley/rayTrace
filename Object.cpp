@@ -25,7 +25,7 @@ void Object::CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
   assert(0); //method called for an object without an implementation defined.
 }
 
-void Object::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc)
+void Object::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
   assert(0); //method called for an object without an implementation defined.
 }
@@ -77,11 +77,11 @@ void Sphere::checkRayHit(Ray ray, Vec3** hitPtr)
   *hitPtr = NULL;
 }
 
-void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc)
+void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
   //TODO: should mix object color and incoming ray color based on incidence angle
 
-  Vec3 shadowDir = (srcList[0].loc3 - ray.loc3);
+  Vec3 shadowDir = (srcList[0]->loc3 - ray.loc3);
   Ray shadowRay = Ray(ray.loc3, shadowDir);
 
   Object** objList = NULL;
@@ -104,28 +104,31 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList
          of the initial ray/object intersection. */
       if (currObjPtr != this)
       {
-        Vec3 dist2Src = srcList[0].loc3 - ray.loc3;
+        Vec3 dist2Src = srcList[0]->loc3 - ray.loc3;
         Vec3 dist2Obj = objHitPts[n] - ray.loc3;
         if (dist2Src.mag2() > dist2Obj.mag2())
         {
+          delete objList; delete objHitPts;
           return;
         }
       }
       else /* Ray hit ourself */
       {
+        delete objList;  delete objHitPts;
         return;
       }
       currObjPtr = objList[++n];
     }
+    delete objList;  delete objHitPts;
   }
-
+ 
   /* No obstructions on the shadow ray. Calculate angle between normal vec and shadow
   ray, then scale rgb intensity accordingly (closer to normal = more intense). Normal 
   direction is from center of sphere to the impact ray intersection pt. Angle is in radians,
   from 0 to Pi, but since we don't expect angles greater than Pi/2 (otherwise would have
   occluded ourself), scale by ((Pi/2)-angle). */
   float angle = shadowDir.getAngle(ray.loc3 - loc3);
-  float scale = 1.0f - (angle/M_PI_2);
+  float scale = 1.0f - (angle/(float)M_PI_2);
   //std::cout << "angle = " << angle << " scale = " << scale << "\n";
 
   /* Due to float math, we might have a few boundary cases of negative scaling. Set them to
@@ -139,6 +142,6 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList
     scale = 1.0f;
   }
   Rgb tempRgb;
-  srcList[0].traceRay(shadowRay, tempRgb, callingObj, NULL, 0);
-  outRgb = outRgb + tempRgb*((1.0f - DEFAULT_AMBIANT_SCALE)*scale);
+  srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
+  outRgb = outRgb + tempRgb*(DEFAULT_SHADOW_SCALE*scale);
 }

@@ -11,6 +11,7 @@ public:
   /* Direction vector. */
   Vec3 vec3;
 
+  Ray() {};
   Ray(Vec3& pos, Vec3& dir);
 };
 

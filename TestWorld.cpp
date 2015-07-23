@@ -1,6 +1,6 @@
 #include "TestWorld.h"
 
-TestWorld::TestWorld(Object* obj, int nObjs, Object* src, int nSrcs, Vec3& ey, Image* image)
+TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey, Image* image)
 {
   std::cout << "TestWorld Constructor\n";
 
@@ -12,20 +12,17 @@ TestWorld::TestWorld(Object* obj, int nObjs, Object* src, int nSrcs, Vec3& ey, I
   img = image;
 }
 
-void TestWorld::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc)
+void TestWorld::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
-  //TODO: should test for each object (optimize later w/kd tree or something similar)
+  //TODO: optimize later w/kd tree or something similar
 
-  /* hitPtr is set to NULL within checkRayHit to indicate no intersection. Otherwise hitPt will be
-     modified to hold the closest intersection point. */
-  Vec3 hitPt;
-  Vec3* hitPtr = &hitPt;
-  objects[0].checkRayHit(ray, &hitPtr);
+  Vec3 closestHit;
+  int n = getClosestObj(ray, closestHit); /* Get the closest object, i.e. the one our ray will hit, if any. */
 
-  if (hitPtr != NULL)
+  if (n >= 0) /* We actually hit something. */
   {
-    ray.loc3 = hitPt;
-    objects[0].traceRay(ray, outRgb, *this, srcList, 1);
+    ray.loc3 = closestHit;
+    objects[n]->traceRay(ray, outRgb, *this, srcList, 1);
   }
   else /* Miss: */
   {
@@ -66,26 +63,28 @@ void TestWorld::CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitP
   /* For TestWorld, we'll check all known non-source objects for a collision. */
   int n, q = 0;
 
+  /* hitPtr is set to NULL within checkRayHit to indicate no intersection. Otherwise hitPt will be
+  modified to hold the closest intersection point. */
+  Vec3 tempPt;
+
   for (n = 0; n < nObj; n++)
   {
-    /* hitPtr is set to NULL within checkRayHit to indicate no intersection. Otherwise hitPt will be
-    modified to hold the closest intersection point. */
-    Vec3 tempPt;
     Vec3* tempPtr = &tempPt;
-    objects[n].checkRayHit(ray, &tempPtr);
+    objects[n]->checkRayHit(ray, &tempPtr);
 
     if (tempPtr != NULL)
     {    
       if (*hitObjPtrArrayPtr == NULL)
       {
         /* Once we know there's going to hits, allocate array to store results. NULL terminate the obj ptr array. */
-        *hitObjPtrArrayPtr = (Object**)malloc((nObj+1)*sizeof(Object*));
-        *hitPtr = (Vec3*)malloc(sizeof(Vec3));
+       // *hitObjPtrArrayPtr = (Object**)malloc((nObj+1)*sizeof(Object*));
+        *hitObjPtrArrayPtr = new Object* [nObj+1];
+        *hitPtr = new Vec3[nObj];
       }
 
       /* TODO: Consider auto-sizing array. */
       /* Populate array of pointers to hit objects and their (first) hit location. */
-      (*hitObjPtrArrayPtr)[q] = &objects[n];
+      (*hitObjPtrArrayPtr)[q] = objects[n];
       (*hitPtr)[q] = tempPt;
       q++;
     }
@@ -101,4 +100,36 @@ void TestWorld::CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitP
   {
     (*hitObjPtrArrayPtr)[q] = NULL;
   }
+}
+
+int TestWorld::getClosestObj(Ray& ray, Vec3& closestHit)
+{
+  int n, closeIdx = -1;
+  Vec3 hitPt;
+  Ray tempRay, closeRay;
+  float minDist2 = -1.0f;
+
+  for (n = 0; n < nObj; n++)
+  {
+    /* TODO: better to define checkRayHit as not modifying ray using const. */
+    tempRay = ray;
+    Vec3* hitPtr = &hitPt;
+    objects[n]->checkRayHit(tempRay, &hitPtr);
+
+    if (hitPtr != NULL)
+    {
+      Vec3 diffVec = ray.loc3 - hitPt;
+      float dist2 = diffVec.mag2();
+
+      if ((dist2 < minDist2) || (minDist2 < 0))
+      {
+        minDist2 = dist2;
+        closeIdx = n;
+        closestHit = hitPt;
+
+      }
+    }
+  }
+
+  return closeIdx;
 }

@@ -19,7 +19,7 @@ class Object {
 
     virtual void checkRayHit(Ray ray, Vec3** hitPtr);
     virtual void CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);
-    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc);
+    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 };
 
 class Sphere : public Object {
@@ -30,7 +30,7 @@ class Sphere : public Object {
     Sphere(Vec3& a, float b, Rgb& c) : Object(a, c), rad(b) {};
 
     virtual void checkRayHit(Ray ray, Vec3** hitPtr);
-    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object* srcList, int nSrc);
+    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 };
 
 #endif //OBJECT_H

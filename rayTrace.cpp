@@ -5,9 +5,17 @@
 
 /* TOP LEVEL TODO (7/22):
 
-    - Get 2 objects working in the same scene
+    - FOV as a parameter sintead of manually setting image/eye params.
 
     - Write parser so a scene can be input as a separate file listing sources/objects 
+
+    - Maybe use const for passing some elements, especially rays, to handling functions that don't really
+      need to modify the original. Maybe not, though, might unleash a constpocalypse.
+
+    - Introduce boxes in addition to spheres. Low prio since this sounds like a decent amount of work and I'm
+      not excited about it at the moment.
+
+    - Look into possible memory leaks.
 */
 
 int main()
@@ -15,10 +23,13 @@ int main()
   /* Image definition. */
   Vec3 imgNorm = Vec3(0.0f, 0.0f, 1.0f);
 
+  /* Eye location. */
+  Vec3 eye = Vec3(1.375f, 0.0f, -10.0f);
+
 #if 1
   /* Higher Res */
-  Vec3 imgLoc = Vec3(-0.75f, 0.75f, 0.0f);
-  int w = 300, h = 300;
+  Vec3 imgLoc = Vec3(0.0f, 1.0f, -2.0f);
+  int w = 600, h = 400;
   float pw = 0.005f, ph = 0.005f;
 #else
   /* Low Res, mainly for testing. */
@@ -29,30 +40,32 @@ int main()
 
   Image img = Image(imgLoc, imgNorm, w, h, pw, ph);
 
-  /* Eye location. */
-  Vec3 eye = Vec3(0.0f, 0.0f, -1.0f);
+  Object** obj = new Object*[3];
 
-  Vec3 objLoc = Vec3(0.0f, 0.0f, 2.0f);
-  float objRad = 1.4f;
-  Rgb objRgb = Rgb(144/255.0f, 224/255.0f, 169/255.0f);
+  /* Big Sphere */
+  Vec3 objLoc = Vec3(2.0f, 0.0f, 2.0f);
+  Rgb objRgb = Rgb(255 / 255.0f, 140 / 255.0f, 0 /255.0f);
+  obj[0] = new Sphere(objLoc, 1.0f, objRgb);
 
-  Object* obj = new Sphere(objLoc, objRad, objRgb);
+  /* Medium Sphere */
+  objLoc = Vec3(0.8f, 0.0f, 0.8f);
+  objRgb = Rgb(0 / 255.0f, 255 / 255.0f, 0 / 255.0f);
+  obj[1] = new Sphere(objLoc, 0.2f, objRgb);
 
-#if 1
-  Vec3 srcLoc = Vec3(-1.0f, 1.0f, -1.0f); /* Offset */
-#else
-  Vec3 srcLoc = Vec3(0.0f, 0.0f, -1.0f); /* Centered */
-#endif
+  /* Small Sphere */
+  objLoc = Vec3(0.5f, 0.2f, 0.5f);
+  objRgb = Rgb(160 / 255.0f, 200 / 255.0f, 200 / 255.0f);
+  obj[2] = new Sphere(objLoc, 0.1f, objRgb);
 
-  float srcRad = 1.0f;
-  Rgb srcRgb = Rgb(220/255.0f, 130/255.0f, 130/255.0f);
+  Vec3 srcLoc = Vec3(-5.0f, 0.0f, -5.0f);
+  Rgb srcRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
+  Object* src = new SimpleSource(srcLoc, 0.1f, srcRgb);
 
-  Object* src = new SimpleSource(srcLoc, srcRad, srcRgb);
-
-  TestWorld world = TestWorld(obj, 1, src, 1, eye, &img);
+  TestWorld world = TestWorld(obj, 3, &src, 1, eye, &img);
   world.runTest();
 
   img.exportBitmap("rayTraceOutput.bmp");
 
   std::cout << "End\n";
+  return 0;
 }
