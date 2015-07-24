@@ -33,7 +33,7 @@ void Image::getPixLoc(Vec3& pLoc, int wIdx, int hIdx)
 
   pLoc.x = loc3.x + pWidth*wIdx;
   pLoc.y = loc3.y - pHeight*hIdx;
-  pLoc.z = 0;
+  pLoc.z = loc3.z;
 }
 
 Pixel* Image::getPix(int wIdx, int hIdx)

@@ -2,7 +2,10 @@
 #include <assert.h>
 #include "Object.h"
 #include "Params.h"
+#include "TestWorld.h"
 #include <math.h> //should go after Params.h to get the benefit of _USE_MATH_DEFINES
+
+extern TestWorld* temp_globalTestWorld;
 
 Object::Object(Vec3& loc, Rgb& color)
 {
@@ -25,7 +28,7 @@ void Object::CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
   assert(0); //method called for an object without an implementation defined.
 }
 
-void Object::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
+void Object::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
   assert(0); //method called for an object without an implementation defined.
 }
@@ -77,12 +80,39 @@ void Sphere::checkRayHit(Ray ray, Vec3** hitPtr)
   *hitPtr = NULL;
 }
 
-void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
+void Sphere::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
-  //TODO: should mix object color and incoming ray color based on incidence angle
+  /* Default rgb to ambiant. */
+  outRgb = rgb*DEFAULT_AMBIANT_SCALE;
 
+  /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
+  if (ray.depth >= MAX_RAY_DEPTH)
+  {
+    return;
+  }
+
+  /*~~~~~~~~~~ Reflection (Mirror) Ray Proc ~~~~~~~~~~*/
+  Vec3 norm = ray.loc3 - loc3;
+  norm.normalize();
+  Vec3 mirrorDir = ray.vec3 - norm*(ray.vec3.dot(norm))*2.0f;
+  Ray mirrorRay = Ray(ray.loc3, mirrorDir, ray.depth + 1);
+
+  Rgb tempRgb;
+  callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
+
+  if ((ray.depth == 1) && (this == temp_globalTestWorld->objects[2]) &&
+    (mirrorRay.loc3.z < 0) && (mirrorRay.loc3.x > 1.4) && (mirrorRay.loc3.y < .45) && 1)
+  {
+    //std::cout << "angle = " << angle << " scale = " << scale << "\n";
+    //tempRgb.r = tempRgb.b = 0.0f;
+    //tempRgb.g = 255.0f;
+  }
+
+  outRgb = outRgb + tempRgb*DEFAULT_REFLECTION_SCALE;
+
+  /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
   Vec3 shadowDir = (srcList[0]->loc3 - ray.loc3);
-  Ray shadowRay = Ray(ray.loc3, shadowDir);
+  Ray shadowRay = Ray(ray.loc3, shadowDir, ray.depth+1);
 
   Object** objList = NULL;
   Vec3* objHitPts = NULL;
@@ -90,14 +120,12 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   /* Generate list of objects hit by the shadow ray and the coordinates of intersections. */
   callingObj.CheckRayHitExt(shadowRay, &objList, &objHitPts);
 
-  /* Default rgb to ambiant. */
-  outRgb = rgb*DEFAULT_AMBIANT_SCALE;
-
   if (objList != NULL)
   {
     int n = 0;
     Object* currObjPtr = objList[0];
-    while (currObjPtr != NULL)
+    /* A source can't occlude itself from this sphere. */
+    while ((currObjPtr != NULL) && (currObjPtr != srcList[0]))
     {
       /* While checking for occlusions, we'll disregard shadow ray intersections with
          current object itself if the intersection isn't different (within tolerances) 
@@ -127,7 +155,7 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   direction is from center of sphere to the impact ray intersection pt. Angle is in radians,
   from 0 to Pi, but since we don't expect angles greater than Pi/2 (otherwise would have
   occluded ourself), scale by ((Pi/2)-angle). */
-  float angle = shadowDir.getAngle(ray.loc3 - loc3);
+  float angle = shadowDir.getAngle(norm);
   float scale = 1.0f - (angle/(float)M_PI_2);
   //std::cout << "angle = " << angle << " scale = " << scale << "\n";
 
@@ -141,7 +169,16 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   {
     scale = 1.0f;
   }
-  Rgb tempRgb;
+
   srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
+
+  if ((ray.depth == 1) && (this == temp_globalTestWorld->objects[2]) &&
+    (shadowRay.loc3.z < .2) && (shadowRay.loc3.x > 1.4) && (shadowRay.loc3.y < .45) && 1)
+  {
+    //std::cout << "angle = " << angle << " scale = " << scale << "\n";
+    //tempRgb.r = tempRgb.b = 0.0f;
+    //tempRgb.g = 255.0f;
+  }
+
   outRgb = outRgb + tempRgb*(DEFAULT_SHADOW_SCALE*scale);
 }

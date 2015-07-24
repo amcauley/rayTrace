@@ -8,10 +8,16 @@
 #define VEC3_EQ_FLOAT_TOLERANCE (1.0e-4)
 
 /* Strength of shadow ray contribution. Fraction from 0.0f to 1.0f. */
-#define DEFAULT_SHADOW_SCALE (0.9f)
+#define DEFAULT_SHADOW_SCALE (0.7f)
 
 /* Strength of ambiant lighting contribution to object coloring. Fraction from 0.0f to 1.0f. */
 #define DEFAULT_AMBIANT_SCALE (0.1f)
+
+/* Strength of reflections. */
+#define DEFAULT_REFLECTION_SCALE (0.2f)
+
+/* Max recursion depth for rays. */
+#define MAX_RAY_DEPTH (4)
 
 /* Misc Params. */
 /* Inlcude math defines such as */

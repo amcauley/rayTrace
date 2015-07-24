@@ -13,7 +13,7 @@ class SimpleSource : public Sphere {
     SimpleSource() {};
     SimpleSource(Vec3& a, float b, Rgb& c) : Sphere(a, b, c) {};
 
-    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
+    virtual void traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 };
 
 #endif //LIGHTSOURCES_H

@@ -15,6 +15,7 @@ class Vec3 {
     float mag2(void);
     float dot(const Vec3& b);
     float getAngle(Vec3& b);
+    Vec3 normalize(void);
     Vec3 operator+ (const Vec3& b);
     Vec3 operator- (const Vec3& b);
     Vec3 operator* (const float b);

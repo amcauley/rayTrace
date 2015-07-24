@@ -54,6 +54,15 @@ float Vec3::dot(const Vec3& b)
   return x*b.x + y*b.y + z*b.z;
 }
 
+Vec3 Vec3::normalize(void)
+{
+  float norm = sqrt(mag2());
+  x /= norm;
+  y /= norm;
+  z /= norm;
+  return *this;
+}
+
 float Vec3::getAngle(Vec3& b)
 {
   float cosAng = dot(b) / sqrt(mag2()*b.mag2());
