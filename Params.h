@@ -11,16 +11,16 @@
 #define PARAM_TOTAL_SCALE (1.0f)
 
 /* Strength of shadow ray contribution. Fraction from 0.0f to 1.0f. */
-#define PARAM_SHADOW_SCALE (0.05f)
+#define PARAM_SHADOW_SCALE (0.4f)
 
 /* Strength of ambiant lighting contribution to object coloring. Fraction from 0.0f to 1.0f. */
-#define PARAM_AMBIANT_SCALE (0.03f)
+#define PARAM_AMBIANT_SCALE (0.2f)
 
 /* Strength of reflections. */
-#define PARAM_REFLECTION_SCALE (0.70f)
+#define PARAM_REFLECTION_SCALE (0.4f)
 
 /* Strength of refraction/glass rays. */
-#define PARAM_REFRACTION_SCALE (0.70f)
+#define PARAM_REFRACTION_SCALE (0.4f)
 
 /* Max recursion depth for rays. */
 #define MAX_RAY_DEPTH (4)

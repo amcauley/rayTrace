@@ -2,7 +2,7 @@
 #ifndef LIGHTSOURCES_H
 #define LIGHTSOURCES_H
 
-#include "Object.h"
+#include "Sphere.h"
 
 /* NOTES:
     Light source is a type of object.
@@ -13,7 +13,7 @@ class SimpleSource : public Sphere {
     SimpleSource() {};
     SimpleSource(Vec3& a, float b, Rgb& c, float i) : Sphere(a, b, c, i) {};
 
-    virtual void traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
+    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 };
 
 #endif //LIGHTSOURCES_H

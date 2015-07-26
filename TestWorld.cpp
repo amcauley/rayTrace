@@ -13,7 +13,7 @@ TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey,
   ior = i;
 }
 
-void TestWorld::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
+void TestWorld::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
   //TODO: optimize later w/kd tree or something similar
 
@@ -57,7 +57,7 @@ void TestWorld::runTest(void)
 }
 
 /* Triple pointer :( */
-void TestWorld::CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
+void TestWorld::CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
 {
   /* Similar to checkRayHit. This takes an input ray and returns any objects this
      object deems it to hit. Use case: lower level object, ex. sphere, calls it's
@@ -105,7 +105,7 @@ void TestWorld::CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitP
   }
 }
 
-int TestWorld::getClosestObj(Ray ray, Vec3& closestHit)
+int TestWorld::getClosestObj(Ray& ray, Vec3& closestHit)
 {
   int n, closeIdx = -1;
   Vec3 hitPt;

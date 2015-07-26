@@ -50,7 +50,7 @@ void physRefraction(Vec3& inVecNormd, Vec3& norm, float nIn, float nOut, Vec3& m
 
   if ((R > 1.0f) || (R < 0.0f))
   {
-    std::cout << "R out of range!\n";
+    std::cout << "R ("<< R << ") out of range!\n";
     assert(0);
   }
 }

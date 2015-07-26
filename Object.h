@@ -6,6 +6,8 @@
 
 #include "Pixel.h"
 #include "Ray.h"
+#include <math.h> //should go after Params.h to get the benefit of _USE_MATH_DEFINES
+#include "Physics.h"
 
 class Object {
   public:
@@ -19,20 +21,9 @@ class Object {
     Object() {};
     Object(Vec3&, Rgb&, float);
 
-    virtual void checkRayHit(Ray ray, Vec3** hitPtr);
-    virtual void CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);
-    virtual void traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
-};
-
-class Sphere : public Object {
-  public:
-    float rad;
-
-    Sphere() {};
-    Sphere(Vec3& a, float b, Rgb& c, float i) : Object(a, c, i), rad(b) {};
-
-    virtual void checkRayHit(Ray ray, Vec3** hitPtr);
-    virtual void traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
+    virtual void checkRayHit(Ray& ray, Vec3** hitPtr);
+    virtual void CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);
+    virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 };
 
 #endif //OBJECT_H
