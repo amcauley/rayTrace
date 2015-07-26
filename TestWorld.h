@@ -17,7 +17,7 @@ public:
   Vec3 eye;
   Image* img;
 
-  TestWorld(Object** objects, int nObj, Object** sources, int nSrc, Vec3& eye, Image* img);
+  TestWorld(Object** objects, int nObj, Object** sources, int nSrc, Vec3& eye, Image* img, float ior);
 
   virtual void traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
   virtual void CheckRayHitExt(Ray ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);

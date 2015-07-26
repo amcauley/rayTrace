@@ -4,14 +4,15 @@
 #include "Params.h"
 #include "TestWorld.h"
 #include <math.h> //should go after Params.h to get the benefit of _USE_MATH_DEFINES
+#include "Physics.h"
 
 extern TestWorld* temp_globalTestWorld;
 
-Object::Object(Vec3& loc, Rgb& color)
-{
-  loc3 = loc;
-  rgb = color;
-}
+Object::Object(Vec3& loc, Rgb& color, float i):
+  loc3(loc),
+  rgb(color),
+  ior(i)         
+{}
 
 void Object::checkRayHit(Ray ray, Vec3** hitPtr)
 {
@@ -83,7 +84,7 @@ void Sphere::checkRayHit(Ray ray, Vec3** hitPtr)
 void Sphere::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
   /* Default rgb to ambiant. */
-  outRgb = rgb*DEFAULT_AMBIANT_SCALE;
+  outRgb = rgb*PARAM_AMBIANT_SCALE;
 
   /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
   if (ray.depth >= MAX_RAY_DEPTH)
@@ -91,24 +92,54 @@ void Sphere::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList
     return;
   }
 
-  /*~~~~~~~~~~ Reflection (Mirror) Ray Proc ~~~~~~~~~~*/
+  /* Compute outward facing normal vector at ray hit location. */
   Vec3 norm = ray.loc3 - loc3;
   norm.normalize();
-  Vec3 mirrorDir = ray.vec3 - norm*(ray.vec3.dot(norm))*2.0f;
-  Ray mirrorRay = Ray(ray.loc3, mirrorDir, ray.depth + 1);
+
+  /* Determine if this ray is from inside the sphere (internal ray) or external. Internal rays
+     originate from a refracted ray traveling inside the sphere. */
+  bool isInternal = (ray.vec3.dot(norm) > 0.0f);
+
+  /*~~~~~~~~~~ Reflection (Mirror) Ray Proc ~~~~~~~~~~*/
+  Vec3 mirrorVec, *glassVec = NULL;
+  ray.vec3.normalize();
+
+  float R;
+  if (isInternal)
+  {
+    physRefraction(ray.vec3, norm*(-1.0f), ior, callingObj.ior, mirrorVec, &glassVec, R);
+  }
+  else
+  {
+    physRefraction(ray.vec3, norm, callingObj.ior, ior, mirrorVec, &glassVec, R);
+  }
+
+  Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1);
 
   Rgb tempRgb;
   callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
 
-  if ((ray.depth == 1) && (this == temp_globalTestWorld->objects[2]) &&
-    (mirrorRay.loc3.z < 0) && (mirrorRay.loc3.x > 1.4) && (mirrorRay.loc3.y < .45) && 1)
+  if (glassVec == NULL)
   {
-    //std::cout << "angle = " << angle << " scale = " << scale << "\n";
-    //tempRgb.r = tempRgb.b = 0.0f;
-    //tempRgb.g = 255.0f;
+    /* TIR: no transmitted/glass wave. */
+    R = 1.0f;
   }
 
-  outRgb = outRgb + tempRgb*DEFAULT_REFLECTION_SCALE;
+  outRgb = outRgb + tempRgb*R*PARAM_REFLECTION_SCALE;
+
+  /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
+
+  /* Proceed with glassy calculations if no total internal reflection. Not that if this is an
+     internal ray, the "glassy" ray is actually in the non-sphere-glass medium, so the name can
+     be a little confusing in some situations. */
+  if (glassVec != NULL)
+  {
+    Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1);
+    callingObj.traceRay(glassRay, tempRgb, callingObj, srcList, 1);
+
+    outRgb = outRgb + tempRgb*(1.0f-R)*PARAM_REFRACTION_SCALE;
+  }
+  delete glassVec;
 
   /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
   Vec3 shadowDir = (srcList[0]->loc3 - ray.loc3);
@@ -142,12 +173,12 @@ void Sphere::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList
       }
       else /* Ray hit ourself */
       {
-        delete objList;  delete objHitPts;
+        delete objList; delete objHitPts;
         return;
       }
       currObjPtr = objList[++n];
     }
-    delete objList;  delete objHitPts;
+    delete objList; delete objHitPts;
   }
  
   /* No obstructions on the shadow ray. Calculate angle between normal vec and shadow
@@ -157,7 +188,6 @@ void Sphere::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList
   occluded ourself), scale by ((Pi/2)-angle). */
   float angle = shadowDir.getAngle(norm);
   float scale = 1.0f - (angle/(float)M_PI_2);
-  //std::cout << "angle = " << angle << " scale = " << scale << "\n";
 
   /* Due to float math, we might have a few boundary cases of negative scaling. Set them to
      be occluded. */
@@ -172,13 +202,5 @@ void Sphere::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList
 
   srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
 
-  if ((ray.depth == 1) && (this == temp_globalTestWorld->objects[2]) &&
-    (shadowRay.loc3.z < .2) && (shadowRay.loc3.x > 1.4) && (shadowRay.loc3.y < .45) && 1)
-  {
-    //std::cout << "angle = " << angle << " scale = " << scale << "\n";
-    //tempRgb.r = tempRgb.b = 0.0f;
-    //tempRgb.g = 255.0f;
-  }
-
-  outRgb = outRgb + tempRgb*(DEFAULT_SHADOW_SCALE*scale);
+  outRgb = outRgb + tempRgb*(PARAM_SHADOW_SCALE*scale);
 }

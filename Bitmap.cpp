@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include "Bitmap.h"
+#include <algorithm>
 
 void writeBytes(std::ofstream& fs, uint32_t dataBytes, int numBytes)
 {
@@ -10,6 +11,13 @@ void writeBytes(std::ofstream& fs, uint32_t dataBytes, int numBytes)
   {
     tempChar = (dataBytes >> (currByte * 8)) & 0xFF;
     fs.write(&tempChar, 1);
+
+#if 0
+    if (tempChar == 0)
+    {
+      std::cout << "0 byte\n";
+    }
+#endif
   }
 }
 
@@ -83,12 +91,23 @@ void writePixelsToBmp24(const char* fileName, Pixel* pixArray, int w, int h)
     {
       int pixIdx = y*w + x;
 
-      //std::cout << (y*w + x);
-      //std::cout << ": ";
+      /* Debug section, useful to highlight pixels that meet certain params. */
+#if 0
+      if ((x == 252) && (y == 135))
+      {
+        std::cout << pixArray[pixIdx].rgb.r << " "
+                  << pixArray[pixIdx].rgb.g << " "
+                  << pixArray[pixIdx].rgb.b << "\n";
+        //pixArray[pixIdx].rgb.b = 1.0f;
+        //pixArray[pixIdx].rgb.g = 1.0f;
+        //pixArray[pixIdx].rgb.r = 1.0f;
+      }
+#endif
+      /* End debug section. */
 
-      writeBytes(fs, (uint32_t)(pixArray[pixIdx].rgb.b *255), 1);
-      writeBytes(fs, (uint32_t)(pixArray[pixIdx].rgb.g *255), 1);
-      writeBytes(fs, (uint32_t)(pixArray[pixIdx].rgb.r *255), 1);
+      writeBytes(fs, (uint32_t)(pixArray[pixIdx].rgb.b * 255), 1);
+      writeBytes(fs, (uint32_t)(pixArray[pixIdx].rgb.g * 255), 1);
+      writeBytes(fs, (uint32_t)(pixArray[pixIdx].rgb.r * 255), 1);
     }
     /* Handle padding. */
     if (rowPadBytes)

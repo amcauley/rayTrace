@@ -17,6 +17,11 @@ Rgb Rgb::operator+ (const Rgb c)
   return Rgb(r + c.r, g +c.g, b + c.b);
 }
 
+Rgb Rgb::operator- (float c)
+{
+  return Rgb(r - c, g - c, b - c);
+}
+
 Rgb Rgb::operator* (const float c)
 {
   return Rgb(r*c, g*c, b*c);

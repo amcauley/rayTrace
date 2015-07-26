@@ -31,10 +31,12 @@ class Image {
     Pixel* pixels;
 
     Image() {};
+    ~Image();
     Image(Vec3&, Vec3&, int, int, float, float);
     void getPixLoc(Vec3& pLoc, int wIdx, int hIdx);
     Pixel* getPix(int wIdx, int hIdx);
     void exportBitmap(const char* fileName);
+    void autoScale(void);
 };
 
 #endif //PIXEL_H

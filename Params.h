@@ -7,14 +7,20 @@
    issues. */
 #define VEC3_EQ_FLOAT_TOLERANCE (1.0e-4)
 
+/* Overall scale factor (pre autoScale, if any). */
+#define PARAM_TOTAL_SCALE (1.0f)
+
 /* Strength of shadow ray contribution. Fraction from 0.0f to 1.0f. */
-#define DEFAULT_SHADOW_SCALE (0.7f)
+#define PARAM_SHADOW_SCALE (0.05f)
 
 /* Strength of ambiant lighting contribution to object coloring. Fraction from 0.0f to 1.0f. */
-#define DEFAULT_AMBIANT_SCALE (0.1f)
+#define PARAM_AMBIANT_SCALE (0.03f)
 
 /* Strength of reflections. */
-#define DEFAULT_REFLECTION_SCALE (0.2f)
+#define PARAM_REFLECTION_SCALE (0.70f)
+
+/* Strength of refraction/glass rays. */
+#define PARAM_REFRACTION_SCALE (0.70f)
 
 /* Max recursion depth for rays. */
 #define MAX_RAY_DEPTH (4)

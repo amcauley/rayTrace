@@ -1,6 +1,6 @@
 #include "TestWorld.h"
 
-TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey, Image* image)
+TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey, Image* image, float i)
 {
   std::cout << "TestWorld Constructor\n";
 
@@ -10,6 +10,7 @@ TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey,
   nSrc = nSrcs;
   eye = ey;
   img = image;
+  ior = i;
 }
 
 void TestWorld::traceRay(Ray ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
@@ -50,6 +51,7 @@ void TestWorld::runTest(void)
 
       Ray activeRay = Ray(pLoc, rayVec, 0);
       traceRay(activeRay, activePixel->rgb, *this, sources, nSrc);
+      activePixel->rgb = activePixel->rgb*PARAM_TOTAL_SCALE;
     }
   }
 }

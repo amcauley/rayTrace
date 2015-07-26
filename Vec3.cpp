@@ -1,6 +1,7 @@
 #include <math.h>
 #include <iostream>
 #include "Vec3.h"
+#include <algorithm>
 
 Vec3::Vec3()
 {
@@ -66,6 +67,8 @@ Vec3 Vec3::normalize(void)
 float Vec3::getAngle(Vec3& b)
 {
   float cosAng = dot(b) / sqrt(mag2()*b.mag2());
+  cosAng = std::min(1.0f, cosAng);
   //std::cout << "dotProd = " << dot(b) << "\n";
+
   return acosf(cosAng); //in radians
 }

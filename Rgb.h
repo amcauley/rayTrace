@@ -8,6 +8,7 @@ public:
   Rgb();
   Rgb(float, float, float);
   Rgb operator+ (const Rgb c);
+  Rgb operator- (float c);
   Rgb operator* (const float c);
 };
 

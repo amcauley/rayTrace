@@ -1,5 +1,6 @@
 #include "Pixel.h"
 #include "Bitmap.h"
+#include <algorithm>
 
 Pixel::Pixel(float ax, float ay, float az,
   float ah, float as, float av)
@@ -13,15 +14,57 @@ Pixel::Pixel(float ax, float ay, float az,
   rgb.b = av;
 }
 
-Image::Image(Vec3& loc, Vec3& n, int w, int h, float pw, float ph)
+Image::Image(Vec3& loc, Vec3& n, int w, int h, float pw, float ph) :
+  loc3(loc),
+  norm(n),
+  width(w),
+  height(h),
+  pWidth(pw),
+  pHeight(ph)
 {
-  loc3 = loc;
-  norm = n;
-  width = w;
-  height = h;
-  pWidth = pw;
-  pHeight = ph;
   pixels = new Pixel[w*h];
+}
+
+Image::~Image()
+{
+  delete pixels;
+}
+
+void Image::autoScale(void)
+{
+  float maxVal = pixels[0].rgb.r;
+
+  int pW, pH;
+  /* First pass - find min/max vals. */
+  for (pH = 0; pH < height; pH++)
+  {
+    for (pW = 0; pW < width; pW++)
+    {
+      Rgb* pixVal = (Rgb*)&pixels[pH*width + pW].rgb;
+      maxVal = std::max(pixVal->r, maxVal);
+      maxVal = std::max(pixVal->g, maxVal);
+      maxVal = std::max(pixVal->b, maxVal);
+    }
+  }
+
+  /* Don't quite scale to max to help prevent potential overflows. */
+  float scaleVal = (254.0f / 255.0f)/maxVal;
+  std::cout << "Image autoscale by " << scaleVal << "\n";
+
+  /* Second pass - scale values. */
+  for (pH = 0; pH < height; pH++)
+  {
+    for (pW = 0; pW < width; pW++)
+    {
+      int pixIdx = pH*width + pW;
+      pixels[pixIdx].rgb = pixels[pixIdx].rgb*scaleVal;
+
+      if (pixels[pixIdx].rgb.r < 0.0f)
+      {
+        std::cout << "scale issue\n";
+      }
+    }
+  }
 }
 
 void Image::getPixLoc(Vec3& pLoc, int wIdx, int hIdx)
