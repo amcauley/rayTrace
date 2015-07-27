@@ -1,5 +1,10 @@
 #include "Sphere.h"
 
+Sphere::Sphere(Vec3& a, float b, Rgb& c, float i, ScaleParams s): 
+  Object(a, c, i, s), 
+  rad(b) 
+{}
+
 void Sphere::checkRayHit(Ray& ray, Vec3** hitPtr)
 {
   /* Sphere/Ray intersection problem is quadratic. Check discriminant to see if they intersect. */
@@ -50,7 +55,7 @@ void Sphere::checkRayHit(Ray& ray, Vec3** hitPtr)
 void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
   /* Default rgb to ambiant. */
-  outRgb = rgb*PARAM_AMBIANT_SCALE;
+  outRgb = rgb*sParams.ambientScale;
 
   /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
   if (ray.depth >= MAX_RAY_DEPTH)
@@ -91,7 +96,7 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     R = 1.0f;
   }
 
-  outRgb = outRgb + tempRgb*R*PARAM_REFLECTION_SCALE;
+  outRgb = outRgb + tempRgb*R*sParams.mirrorScale;
 
   /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
 
@@ -103,9 +108,9 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1);
     callingObj.traceRay(glassRay, tempRgb, callingObj, srcList, 1);
 
-    outRgb = outRgb + tempRgb*(1.0f - R)*PARAM_REFRACTION_SCALE;
+    outRgb = outRgb + tempRgb*(1.0f - R)*sParams.glassScale;
+    delete glassVec;
   }
-  delete glassVec;
 
   /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
   Vec3 shadowDir = (srcList[0]->loc3 - ray.loc3);
@@ -168,5 +173,5 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
 
   srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
 
-  outRgb = outRgb + tempRgb*(PARAM_SHADOW_SCALE*scale);
+  outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
 }

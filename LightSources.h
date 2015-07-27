@@ -11,7 +11,7 @@
 class SimpleSource : public Sphere {
   public:
     SimpleSource() {};
-    SimpleSource(Vec3& a, float b, Rgb& c, float i) : Sphere(a, b, c, i) {};
+    SimpleSource(Vec3& a, float b, Rgb& c, float i, ScaleParams s) : Sphere(a, b, c, i, s) {};
 
     virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 };

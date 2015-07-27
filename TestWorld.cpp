@@ -1,15 +1,13 @@
 #include "TestWorld.h"
 
-TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey, Image* image, float i)
+TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey, Image* image, float i):
+  objects(obj),
+  nObj(nObjs),
+  sources(src),
+  nSrc(nSrcs),
+  eye(ey),
+  img(image)
 {
-  std::cout << "TestWorld Constructor\n";
-
-  objects = obj;
-  nObj = nObjs;
-  sources = src;
-  nSrc = nSrcs;
-  eye = ey;
-  img = image;
   ior = i;
 }
 
@@ -25,6 +23,7 @@ void TestWorld::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** src
     Ray tempRay = ray;
     tempRay.loc3 = closestHit;
     objects[n]->traceRay(tempRay, outRgb, *this, srcList, 1);
+    outRgb = outRgb*objects[n]->sParams.totalScale;
   }
   else /* Miss: */
   {
@@ -37,10 +36,23 @@ void TestWorld::runTest(void)
   /* Location of active pixel. */
   Vec3 pLoc;
 
+#ifdef STATUS_PRINTS_ENABLED
+  float lastCompPercent = -11.0f, compPercent;
+#endif
+
   int pw, ph;
-  for (pw = 0; pw < img->width; pw++)
+  for (ph = 0; ph < img->height; ph++)
   {
-    for (ph = 0; ph < img->height; ph++)
+#ifdef STATUS_PRINTS_ENABLED
+    compPercent = 100.0f*(float)ph / (float)img->height;
+    if (compPercent >= lastCompPercent + 10.0f)
+    {
+      lastCompPercent = compPercent;
+      std::cout << "runTest " << compPercent << "% complete...\n";
+    }
+#endif
+
+    for (pw = 0; pw < img->width; pw++)
     {
       img->getPixLoc(pLoc, pw, ph);
 
@@ -54,6 +66,9 @@ void TestWorld::runTest(void)
       activePixel->rgb = activePixel->rgb*PARAM_TOTAL_SCALE;
     }
   }
+#ifdef STATUS_PRINTS_ENABLED
+  std::cout << "runTest complete.\n";
+#endif
 }
 
 /* Triple pointer :( */

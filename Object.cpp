@@ -6,10 +6,11 @@
 
 extern TestWorld* temp_globalTestWorld;
 
-Object::Object(Vec3& loc, Rgb& color, float i):
+Object::Object(Vec3& loc, Rgb& color, float i, ScaleParams& sParams):
   loc3(loc),
   rgb(color),
-  ior(i)         
+  ior(i),
+  sParams(sParams)
 {}
 
 void Object::checkRayHit(Ray& ray, Vec3** hitPtr)

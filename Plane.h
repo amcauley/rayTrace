@@ -9,7 +9,7 @@ public:
   float d;
 
   Plane() {};
-  Plane(Vec3& norm, float zOffset, Rgb& c, float i);
+  Plane(Vec3& norm, float zOffset, Rgb& c, float i, ScaleParams s);
 
   virtual void checkRayHit(Ray& ray, Vec3** hitPtr);
   virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);

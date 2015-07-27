@@ -16,10 +16,12 @@ class Object {
     /* HSV color for this object. */
     Rgb rgb;
     /* Index of refraction. */
-    float ior; 
+    float ior;
+    /* Scaling parameters. */
+    ScaleParams sParams;
 
     Object() {};
-    Object(Vec3&, Rgb&, float);
+    Object(Vec3& loc, Rgb& rgb, float ior, ScaleParams& s);
 
     virtual void checkRayHit(Ray& ray, Vec3** hitPtr);
     virtual void CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);

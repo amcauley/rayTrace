@@ -1,5 +1,6 @@
 #include "Pixel.h"
 #include "Bitmap.h"
+#include <assert.h>
 #include <algorithm>
 
 Pixel::Pixel(float ax, float ay, float az,
@@ -27,7 +28,7 @@ Image::Image(Vec3& loc, Vec3& n, int w, int h, float pw, float ph) :
 
 Image::~Image()
 {
-  delete pixels;
+  delete[] pixels;
 }
 
 void Image::autoScale(void)
@@ -62,6 +63,7 @@ void Image::autoScale(void)
       if (pixels[pixIdx].rgb.r < 0.0f)
       {
         std::cout << "scale issue\n";
+        assert(0);
       }
     }
   }

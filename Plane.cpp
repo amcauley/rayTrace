@@ -2,11 +2,10 @@
 
 /* The loc3 value will hold the plane normal vector. This saves space, since 
    there's no real location definition for a plane. */
-Plane::Plane(Vec3& normV, float offset, Rgb& c, float i) : 
-  Object(normV, c, i),
+Plane::Plane(Vec3& normV, float offset, Rgb& c, float i, ScaleParams s): 
+  Object(normV, c, i, s),
   d(offset)
-{
-}
+{}
 
 void Plane::checkRayHit(Ray& ray, Vec3** hitPtr)
 {
@@ -32,7 +31,7 @@ void Plane::checkRayHit(Ray& ray, Vec3** hitPtr)
 void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
   /* Default rgb to ambiant. */
-  outRgb = rgb*PARAM_AMBIANT_SCALE;
+  outRgb = rgb*sParams.ambientScale;
 
   /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
   if (ray.depth >= MAX_RAY_DEPTH)
@@ -50,6 +49,11 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
     float R = 1.0f;
     physRefraction(ray.vec3, loc3, callingObj.ior, ior, mirrorVec, &glassVec, R);
 
+    if (glassVec != NULL)
+    {
+      delete glassVec;
+    }
+    
     Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1);
 
     callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
@@ -121,5 +125,5 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
 
   srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
 
-  outRgb = outRgb + tempRgb*(PARAM_SHADOW_SCALE*scale);
+  outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
 }
