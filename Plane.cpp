@@ -54,7 +54,7 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
       delete glassVec;
     }
     
-    Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1);
+    Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
 
     callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
 
@@ -66,7 +66,7 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
 
   /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
   Vec3 shadowDir = (srcList[0]->loc3 - ray.loc3);
-  Ray shadowRay = Ray(ray.loc3, shadowDir, ray.depth + 1);
+  Ray shadowRay = Ray(ray.loc3, shadowDir, ray.depth + 1, 0.0f);
 
   Object** objList = NULL;
   Vec3* objHitPts = NULL;

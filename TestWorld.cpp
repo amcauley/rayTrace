@@ -16,12 +16,14 @@ void TestWorld::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** src
   //TODO: optimize later w/kd tree or something similar
 
   Vec3 closestHit;
-  int n = getClosestObj(ray, closestHit); /* Get the closest object, i.e. the one our ray will hit, if any. */
+  float dist2;
+  int n = getClosestObj(ray, closestHit, &dist2); /* Get the closest object, i.e. the one our ray will hit, if any. */
 
   if (n >= 0) /* We actually hit something. */
   {
     Ray tempRay = ray;
     tempRay.loc3 = closestHit;
+    tempRay.dist2 = dist2;
     objects[n]->traceRay(tempRay, outRgb, *this, srcList, 1);
     outRgb = outRgb*objects[n]->sParams.totalScale;
   }
@@ -61,7 +63,7 @@ void TestWorld::runTest(void)
       Pixel* activePixel = img->getPix(pw, ph);
       activePixel->loc3 = pLoc;
 
-      Ray activeRay = Ray(pLoc, rayVec, 0);
+      Ray activeRay = Ray(pLoc, rayVec, 0, 0.0f);
       traceRay(activeRay, activePixel->rgb, *this, sources, nSrc);
       activePixel->rgb = activePixel->rgb*PARAM_TOTAL_SCALE;
     }
@@ -120,7 +122,7 @@ void TestWorld::CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hit
   }
 }
 
-int TestWorld::getClosestObj(Ray& ray, Vec3& closestHit)
+int TestWorld::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
 {
   int n, closeIdx = -1;
   Vec3 hitPt;
@@ -150,5 +152,6 @@ int TestWorld::getClosestObj(Ray& ray, Vec3& closestHit)
     }
   }
 
+  *dist2out = minDist2;
   return closeIdx;
 }

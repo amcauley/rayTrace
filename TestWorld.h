@@ -22,7 +22,7 @@ public:
   virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
   virtual void CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);
   void runTest(void);
-  int getClosestObj(Ray& ray, Vec3& closestHit);
+  int getClosestObj(Ray& ray, Vec3& closestHit, float* dist2);
 };
 
 #endif //TESTWORLD_H

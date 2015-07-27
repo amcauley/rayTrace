@@ -1,4 +1,5 @@
 #include "Sphere.h"
+#include <assert.h>
 
 Sphere::Sphere(Vec3& a, float b, Rgb& c, float i, ScaleParams s): 
   Object(a, c, i, s), 
@@ -85,7 +86,7 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     physRefraction(ray.vec3, norm, callingObj.ior, ior, mirrorVec, &glassVec, R);
   }
 
-  Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1);
+  Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
 
   Rgb tempRgb;
   callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
@@ -105,16 +106,26 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   be a little confusing in some situations. */
   if (glassVec != NULL)
   {
-    Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1);
+    Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1, 0.0f);
     callingObj.traceRay(glassRay, tempRgb, callingObj, srcList, 1);
 
-    outRgb = outRgb + tempRgb*(1.0f - R)*sParams.glassScale;
+    float distanceScaling = powf(2.0f, -sqrt(ray.dist2)*0.25f);
+    //std::cout << ray.dist2 << "\n";
+
+    if (distanceScaling > 1.0f)
+    {
+      std::cout << "distanceScaling error: " << distanceScaling << "\n";
+      assert(0);
+    }
+
+    outRgb = outRgb + 
+             (tempRgb*(1.0f - R)*distanceScaling + rgb*(1.0f - distanceScaling)*0.05f)*sParams.glassScale;
     delete glassVec;
   }
 
   /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
   Vec3 shadowDir = (srcList[0]->loc3 - ray.loc3);
-  Ray shadowRay = Ray(ray.loc3, shadowDir, ray.depth + 1);
+  Ray shadowRay = Ray(ray.loc3, shadowDir, ray.depth + 1, 0.0f);
 
   Object** objList = NULL;
   Vec3* objHitPts = NULL;

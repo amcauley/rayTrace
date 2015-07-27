@@ -18,9 +18,22 @@
 
 /* TOP LEVEL TODO (7/26):
 
-    - Check for memory leaks (https://msdn.microsoft.com/en-us/library/x98tx3cf%28v=VS.100%29.aspx)
+    - add logging capability to print out all info for a particular pixel and write out to a dbg file.
+      will be useful for debugging some issues. For example, some pixels at the edge of the sphere are too
+      dim/bright depending on float point tolerance. Example file:
 
-    - Individual params (reflectance scaling, etc.) for each object.
+      pix xyz
+      (0) rgb, scale
+        (1 shadow) rgb, scale
+          (2 shadow) rgb, scale
+          (2 mirror) rgb, scale
+          (2 glass) rgb, scale
+          (2 ambient) rgb, scale
+        (1 mirror) rgb, scale
+        (1 glass) rgb, scale
+          ...
+        (1 ambient) rgb, scale
+          ...
 
     - FOV as a parameter sintead of manually setting image/eye params.
 
@@ -30,14 +43,7 @@
 
     - Cleaner debug framework, maybe some #define to enable debug vars, e.g. temp_globalTestWorld
 
-    - Beer's law 
-
     - Pictures - let planes display bitmap images.
-
-    - Simple animations (put out a series of images, can use GIMP or something to turn into a GIF).
-
-    - Maybe use const for passing some elements, especially rays, to handling functions that don't really
-      need to modify the original. Maybe not, though, might unleash a constpocalypse.
 
     - Introduce rectangles/boxes (6 rectangles) in addition to spheres.
 */
@@ -117,17 +123,17 @@ int main()
     /* Sphere 1 */
     objLoc = Vec3(0.5f, -0.5f, 3.5f);
     objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
-    obj[6] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.0f, 0.05f, 1.0f, 1.0f, 0.05f));
+    obj[6] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.2f, 0.00f, 1.0f, 1.0f, 0.01f));
 
     /* Sphere 2 */
     objLoc = Vec3(0.05f, 1.0f, 6.5f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
-    obj[7] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.0f, 0.05, 1.0f, 1.0f, 0.05f));
+    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 0 / 255.0f);
+    obj[7] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.3f, 0.00f, 1.0f, 1.0f, 0.01f));
 
     /* Sphere 3 */
     objLoc = Vec3(-1.0f, -0.5f, 10.0f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
-    obj[8] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.0f, 0.05, 1.0f, 1.0f, 0.05f));
+    objRgb = Rgb(0 / 255.0f, 255 / 255.0f, 0 / 255.0f);
+    obj[8] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.3f, 0.00f, 1.0f, 1.0f, 0.01f));
 
 
     /* ~~~ Start rendering. ~~~ */
