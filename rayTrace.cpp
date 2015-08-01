@@ -83,7 +83,7 @@ int main()
     Object** src = new Object*[nSrc];
 
     /* ~~~ Source ~~~ */
-    Vec3 srcLoc = Vec3(-5.0f, 5.0f, 0.0f);
+    Vec3 srcLoc = Vec3(-5.0f, 5.0f, -10.0f);
     Rgb srcRgb = Rgb(214 / 255.0f, 227 / 255.0f, 190 / 255.0f);
     src[0] = new SimpleSource(srcLoc, 0.5f, srcRgb, 1.0f, ScaleParams(1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
     /* Source is also an object. */

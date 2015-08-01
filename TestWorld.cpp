@@ -1,4 +1,5 @@
 #include "TestWorld.h"
+#include "DbgLog.h"
 
 TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey, Image* image, float i):
   objects(obj),
@@ -63,9 +64,24 @@ void TestWorld::runTest(void)
       Pixel* activePixel = img->getPix(pw, ph);
       activePixel->loc3 = pLoc;
 
+#ifdef DEBUG_GEN_PIXEL_REPORT
+      dbgPixLog.isEn = ((pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y));
+#endif
+
       Ray activeRay = Ray(pLoc, rayVec, 0, 0.0f);
       traceRay(activeRay, activePixel->rgb, *this, sources, nSrc);
       activePixel->rgb = activePixel->rgb*PARAM_TOTAL_SCALE;
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+      dbgPixLog.storeInfo(this, activePixel->rgb);
+      dbgPixLog.export(this, "dbgPixLog.txt");
+    #ifdef MARK_DEBUG_PIXEL
+      if (dbgPixLog.isEn)
+      {
+        activePixel->rgb = Rgb(1.0f, 1.0f, 1.0f);
+      }
+    #endif
+#endif
     }
   }
 #ifdef STATUS_PRINTS_ENABLED

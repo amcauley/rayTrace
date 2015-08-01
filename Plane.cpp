@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include "DbgLog.h"
 
 /* The loc3 value will hold the plane normal vector. This saves space, since 
    there's no real location definition for a plane. */
@@ -33,6 +34,12 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
   /* Default rgb to ambiant. */
   outRgb = rgb*sParams.ambientScale;
 
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.nextLvl(RAY_TYPE_AMBIENT);
+  dbgPixLog.storeInfo(this, rgb);
+  dbgPixLog.restoreLvl();
+#endif
+
   /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
   if (ray.depth >= MAX_RAY_DEPTH)
   {
@@ -56,7 +63,16 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
     
     Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
 
+#ifdef DEBUG_GEN_PIXEL_REPORT
+    dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
+#endif
+
     callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+    dbgPixLog.storeInfo(this, tempRgb);
+    dbgPixLog.restoreLvl();
+#endif
 
     //outRgb = outRgb + tempRgb*R*PARAM_REFLECTION_SCALE;
   }
@@ -123,7 +139,16 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
     scale = 1.0f;
   }
 
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.nextLvl(RAY_TYPE_SHADOW);
+#endif
+
   srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.storeInfo(this, tempRgb);
+  dbgPixLog.restoreLvl();
+#endif
 
   outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
 }

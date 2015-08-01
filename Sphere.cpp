@@ -1,5 +1,6 @@
 #include "Sphere.h"
 #include <assert.h>
+#include "DbgLog.h"
 
 Sphere::Sphere(Vec3& a, float b, Rgb& c, float i, ScaleParams s): 
   Object(a, c, i, s), 
@@ -55,8 +56,14 @@ void Sphere::checkRayHit(Ray& ray, Vec3** hitPtr)
 
 void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
+
   /* Default rgb to ambiant. */
   outRgb = rgb*sParams.ambientScale;
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.nextLvl(RAY_TYPE_AMBIENT);
+  dbgPixLog.storeInfo(this, rgb);
+  dbgPixLog.restoreLvl();
+#endif
 
   /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
   if (ray.depth >= MAX_RAY_DEPTH)
@@ -88,8 +95,18 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
 
   Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
 
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
+#endif
+
+
   Rgb tempRgb;
   callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.storeInfo(this, tempRgb);
+  dbgPixLog.restoreLvl();
+#endif
 
   if (glassVec == NULL)
   {
@@ -106,8 +123,17 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   be a little confusing in some situations. */
   if (glassVec != NULL)
   {
+#ifdef DEBUG_GEN_PIXEL_REPORT
+    dbgPixLog.nextLvl(RAY_TYPE_GLASS);
+#endif
+
     Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1, 0.0f);
     callingObj.traceRay(glassRay, tempRgb, callingObj, srcList, 1);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+    dbgPixLog.storeInfo(this, tempRgb);
+    dbgPixLog.restoreLvl();
+#endif
 
     float distanceScaling = powf(2.0f, -sqrt(ray.dist2)*0.25f);
     //std::cout << ray.dist2 << "\n";
@@ -182,7 +208,16 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     scale = 1.0f;
   }
 
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.nextLvl(RAY_TYPE_SHADOW);
+#endif
+
   srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.storeInfo(this, tempRgb);
+  dbgPixLog.restoreLvl();
+#endif
 
   outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
 }

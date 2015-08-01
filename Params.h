@@ -3,7 +3,7 @@
 #define PARAMS_H
 
 /* Max recursion depth for rays. */
-#define MAX_RAY_DEPTH (10)
+#define MAX_RAY_DEPTH (3)
 
 /* Print out processing progress info. */
 #define STATUS_PRINTS_ENABLED
@@ -12,6 +12,15 @@
 Vec3 for the vectors to be considered equal. Accounts for floating point precision
 issues. */
 #define VEC3_EQ_FLOAT_TOLERANCE (1.0e-4)
+
+/* Enable to create an output log tracing the RGB values leading to pixel (x,y)'s value. */
+#define DEBUG_GEN_PIXEL_REPORT
+
+#define DEBUG_PIXEL_REPORT_X (200)  //Pixel width coord
+#define DEBUG_PIXEL_REPORT_Y (200)  //Pixel height coord
+
+/* Enable to mark the debug pixel white for easier locating. */
+//#define MARK_DEBUG_PIXEL
 
 /* Enable to create memory leak report at end of program. */
 //#define DEBUG_MEM_LEAK_REPORT
