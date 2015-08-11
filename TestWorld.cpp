@@ -10,23 +10,31 @@ TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey,
   img(image)
 {
   ior = i;
+
+  /* Form the object search kd tree. */
+  objTree = Aabb3dTree(obj, nObjs, TOP_LEVEL_OBJECT_TREE_DEPTH);
 }
 
+TestWorld::~TestWorld()
+{
+  /* Delete kd-tree memory. */
+  objTree.freeTreeMem();
+}
+
+/* Trace the ray's progress. Use kd-tree to find closest hit object. */
 void TestWorld::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
-  //TODO: optimize later w/kd tree or something similar
-
   Vec3 closestHit;
   float dist2;
-  int n = getClosestObj(ray, closestHit, &dist2); /* Get the closest object, i.e. the one our ray will hit, if any. */
+  Object* closestObjPtr = objTree.root->getClosestObj(ray, closestHit, &dist2);
 
-  if (n >= 0) /* We actually hit something. */
+  if (closestObjPtr != NULL) /* We actually hit something. */
   {
     Ray tempRay = ray;
     tempRay.loc3 = closestHit;
     tempRay.dist2 = dist2;
-    objects[n]->traceRay(tempRay, outRgb, *this, srcList, 1);
-    outRgb = outRgb*objects[n]->sParams.totalScale;
+    closestObjPtr->traceRay(tempRay, outRgb, *this, srcList, 1);
+    outRgb = outRgb*closestObjPtr->sParams.totalScale;
   }
   else /* Miss: */
   {
@@ -138,36 +146,3 @@ void TestWorld::CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hit
   }
 }
 
-int TestWorld::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
-{
-  int n, closeIdx = -1;
-  Vec3 hitPt;
-  Ray tempRay, closeRay;
-  float minDist2 = -1.0f;
-
-  for (n = 0; n < nObj; n++)
-  {
-    /* TODO: better to define checkRayHit as not modifying ray using const. */
-    tempRay = ray;
-    Vec3* hitPtr = &hitPt;
-    objects[n]->checkRayHit(tempRay, &hitPtr);
-
-    if (hitPtr != NULL)
-    {
-      Vec3 diffVec = ray.loc3 - hitPt;
-
-      float dist2 = diffVec.mag2();
-
-      if ((dist2 < minDist2) || (minDist2 < 0))
-      {
-        minDist2 = dist2;
-        closeIdx = n;
-        closestHit = hitPt;
-
-      }
-    }
-  }
-
-  *dist2out = minDist2;
-  return closeIdx;
-}

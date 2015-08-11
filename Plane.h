@@ -8,7 +8,8 @@ class Plane : public Object {
 public:
   float d;
 
-  Plane() {};
+  Plane();
+  ~Plane();
   Plane(Vec3& norm, float zOffset, Rgb& c, float i, ScaleParams s);
 
   virtual void checkRayHit(Ray& ray, Vec3** hitPtr);

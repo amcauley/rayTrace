@@ -11,13 +11,6 @@ void writeBytes(std::ofstream& fs, uint32_t dataBytes, int numBytes)
   {
     tempChar = (dataBytes >> (currByte * 8)) & 0xFF;
     fs.write(&tempChar, 1);
-
-#if 0
-    if (tempChar == 0)
-    {
-      std::cout << "0 byte\n";
-    }
-#endif
   }
 }
 

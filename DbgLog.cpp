@@ -120,8 +120,11 @@ void DbgPixLog::export(const TestWorld* environment, const std::string fileName)
   std::ofstream fs;
   fs.open(fileName, std::ios::out);
 
+  /* Pixel info. */
+  fs << "Pixel (X, Y):\n(" << DEBUG_PIXEL_REPORT_X << ", " << DEBUG_PIXEL_REPORT_Y << ")\n";
+
   /* Print Test World pointer/identifier. */
-  fs << "Test World:\n";
+  fs << "\nTest World:\n";
   fs << std::to_string((uintptr_t)environment) << "\n";
 
   /* Print obj/src pointer/identifier info. */

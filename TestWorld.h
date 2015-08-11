@@ -3,6 +3,7 @@
 #define TESTWORLD_H
 
 #include "Object.h"
+#include "AabbTree.h"
 
 /* NOTES:
   This is the class that contains all other objects. It's responsible for actually running the simulation. The main
@@ -16,8 +17,10 @@ public:
   int nObj, nSrc;
   Vec3 eye;
   Image* img;
+  Aabb3dTree objTree;
 
   TestWorld(Object** objects, int nObj, Object** sources, int nSrc, Vec3& eye, Image* img, float ior);
+  ~TestWorld();
 
   virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
   virtual void CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);

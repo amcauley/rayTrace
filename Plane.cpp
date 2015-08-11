@@ -1,12 +1,55 @@
 #include "Plane.h"
 #include "DbgLog.h"
 
+Plane::Plane() {}
+
+Plane::~Plane() {}
+
 /* The loc3 value will hold the plane normal vector. This saves space, since 
    there's no real location definition for a plane. */
 Plane::Plane(Vec3& normV, float offset, Rgb& c, float i, ScaleParams s): 
   Object(normV, c, i, s),
   d(offset)
-{}
+{
+  /* Unless the plane is perpendicular to an axis, it's extent in that axis will be infinite.
+     If it's perpendicular, it will only have a constant value in that axis. We give this constant
+     value a little padding to help protect against float rounding/precision sensitivity. */
+  if ((normV.y == 0.0f) && (normV.z == 0.0f))
+  {
+    float sign = normV.x > 0.0f ? -1.0f : 1.0f;
+    bbox->xl = sign*offset - VEC3_EQ_FLOAT_TOLERANCE;
+    bbox->xh = sign*offset + VEC3_EQ_FLOAT_TOLERANCE;
+  }
+  else
+  {
+    bbox->xl = -std::numeric_limits<float>::infinity();
+    bbox->xh = std::numeric_limits<float>::infinity();
+  }
+  if ((normV.x == 0.0f) && (normV.z == 0.0f))
+  {
+    float sign = normV.y > 0.0f ? -1.0f : 1.0f;
+    bbox->yl = sign*offset - VEC3_EQ_FLOAT_TOLERANCE;
+    bbox->yh = sign*offset + VEC3_EQ_FLOAT_TOLERANCE;
+  }
+  else
+  {
+    bbox->yl = -std::numeric_limits<float>::infinity();
+    bbox->yh = std::numeric_limits<float>::infinity();
+  }
+  if ((normV.x == 0.0f) && (normV.y == 0.0f))
+  {
+    float sign = normV.z > 0.0f ? -1.0f : 1.0f;
+    bbox->zl = sign*offset - VEC3_EQ_FLOAT_TOLERANCE;
+    bbox->zh = sign*offset + VEC3_EQ_FLOAT_TOLERANCE;
+  }
+  else
+  {
+    bbox->zl = -std::numeric_limits<float>::infinity();
+    bbox->zh = std::numeric_limits<float>::infinity();
+  }
+
+
+}
 
 void Plane::checkRayHit(Ray& ray, Vec3** hitPtr)
 {

@@ -50,6 +50,9 @@ void Image::autoScale(void)
 
   /* Don't quite scale to max to help prevent potential overflows. */
   float scaleVal = (254.0f / 255.0f)/maxVal;
+#ifdef SKIP_IMAGE_AUTOSCALE
+  scaleVal = 1.0f;
+#endif
   std::cout << "Image autoscale by " << scaleVal << "\n";
 
   /* Second pass - scale values. */

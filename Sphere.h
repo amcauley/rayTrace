@@ -8,7 +8,8 @@ class Sphere : public Object {
 public:
   float rad;
 
-  Sphere() {};
+  Sphere();
+  ~Sphere();
   Sphere(Vec3& a, float b, Rgb& c, float i, ScaleParams s);
 
   virtual void checkRayHit(Ray& ray, Vec3** hitPtr);

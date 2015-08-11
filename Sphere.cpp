@@ -2,10 +2,21 @@
 #include <assert.h>
 #include "DbgLog.h"
 
+Sphere::Sphere() {};
+
 Sphere::Sphere(Vec3& a, float b, Rgb& c, float i, ScaleParams s): 
   Object(a, c, i, s), 
-  rad(b) 
-{}
+  rad(b)
+{
+  /* Bounding box is just the cube enclosing this sphere. Bounding box memory
+     should already have been allocated via new during the Object (Sphere's parent)
+     constructor, and will be deleted during Object's destructor. */
+  *bbox =    AABB(a.x-rad, a.x+rad,
+                  a.y-rad, a.y+rad,
+                  a.z-rad, a.z+rad);
+}
+
+Sphere::~Sphere() {}
 
 void Sphere::checkRayHit(Ray& ray, Vec3** hitPtr)
 {
@@ -56,14 +67,14 @@ void Sphere::checkRayHit(Ray& ray, Vec3** hitPtr)
 
 void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
-
   /* Default rgb to ambiant. */
   outRgb = rgb*sParams.ambientScale;
+
 #ifdef DEBUG_GEN_PIXEL_REPORT
   dbgPixLog.nextLvl(RAY_TYPE_AMBIENT);
   dbgPixLog.storeInfo(this, rgb);
   dbgPixLog.restoreLvl();
-#endif
+#endif //DEBUG_GEN_PIXEL_REPORT
 
   /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
   if (ray.depth >= MAX_RAY_DEPTH)

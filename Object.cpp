@@ -6,29 +6,32 @@
 
 extern TestWorld* temp_globalTestWorld;
 
+Object::Object() {};
+Object::~Object() 
+{ 
+  if (bbox != NULL) delete bbox; 
+};
+
 Object::Object(Vec3& loc, Rgb& color, float i, ScaleParams& sParams):
   loc3(loc),
   rgb(color),
   ior(i),
   sParams(sParams)
-{}
+{
+  bbox = new AABB;
+}
 
 void Object::checkRayHit(Ray& ray, Vec3** hitPtr)
 {
-  /* Derived classes will implement this for themselves. */
-  *hitPtr = NULL;
+  assert(0); //Shouldn't be using default version.
 }
 
 void Object::CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
 {
-  /* Similar to checkRayHit. This takes an input ray and returns any objects this
-  object deems it to hit. Use case: lower level object, ex. sphere, calls it's
-  parent object (TestWorld) to see if a shadow ray hits anything. */
-
-  assert(0); //method called for an object without an implementation defined.
+  assert(0); //Shouldn't be using default version.
 }
 
 void Object::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
-  assert(0); //method called for an object without an implementation defined.
+  assert(0); //Shouldn't be using default version.
 }
