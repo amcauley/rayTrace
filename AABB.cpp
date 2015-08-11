@@ -20,23 +20,23 @@ AABB::AABB(float x1, float xh, float yl, float yh, float zl, float zh) :
 bool AABB::intersects(const AABB& box2)
 {
   float leftVal;
-  bool intersects = false;
+  bool intersects = true;
 
   /* Find the left-most box and declare intersection, at least for this axis, if the leftmost
      box's rightmost index is greater than the rightmost box's left index. */
   leftVal = fminf(xl, box2.xl);
-  if (leftVal == xl) intersects |= xh > box2.xl;
-  else intersects |= box2.xh > xl;
+  if (leftVal == xl) intersects &= xh > box2.xl;
+  else intersects &= box2.xh > xl;
   if (!intersects) return false;
 
   leftVal = fminf(yl, box2.yl);
-  if (leftVal == yl) intersects |= yh > box2.yl;
-  else intersects |= box2.yh > yl;
+  if (leftVal == yl) intersects &= yh > box2.yl;
+  else intersects &= box2.yh > yl;
   if (!intersects) return false;
 
   leftVal = fminf(zl, box2.zl);
-  if (leftVal == zl) intersects |= zh > box2.zl;
-  else intersects |= box2.zh >zl;
+  if (leftVal == zl) intersects &= zh > box2.zl;
+  else intersects &= box2.zh >zl;
   return intersects;
 }
 

@@ -240,9 +240,9 @@ Object* Aabb3dNode::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
   /* Get the closest object looking only at the current node. */
   for (int k = 0; k < numObj; ++k)
   {
-    tempRay = ray;
+    //tempRay = ray;
     Vec3* hitPtr = &hitPt;
-    objs[k]->checkRayHit(tempRay, &hitPtr);
+    objs[k]->checkRayHit(ray, &hitPtr);
 
     if (hitPtr != NULL)
     {
@@ -262,15 +262,13 @@ Object* Aabb3dNode::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
   /* Get the closest node from the left path, if we hit it (and it exists). */
   if (left != NULL)
   {
-    tempRay = ray;
     Vec3* hitPtr = &hitPt;
-    leftBox.checkRayHit(tempRay, &hitPtr);
+    leftBox.checkRayHit(ray, &hitPtr);
 
     if (hitPtr != NULL) /* We hit the left box, so recurse and get the closest point in it, if any objects are hit. */
     {
-      tempRay = ray;
       Vec3 closeHit;
-      tempObj = left->getClosestObj(tempRay, closeHit, &dist2);
+      tempObj = left->getClosestObj(ray, closeHit, &dist2);
 
       if ((tempObj != NULL) && ((dist2 < minDist2) || (minDist2 < 0)))
       {
@@ -284,15 +282,13 @@ Object* Aabb3dNode::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
   /* Get closest point from the right subtree. */
   if (right != NULL)
   {
-    tempRay = ray;
     Vec3* hitPtr = &hitPt;
-    rightBox.checkRayHit(tempRay, &hitPtr);
+    rightBox.checkRayHit(ray, &hitPtr);
 
     if (hitPtr != NULL) /* We hit the left box, so recurse and get the closest point in it. */
     {
-      tempRay = ray;
       Vec3 closeHit;
-      tempObj = right->getClosestObj(tempRay, closeHit, &dist2);
+      tempObj = right->getClosestObj(ray, closeHit, &dist2);
 
       if ((tempObj != NULL) && ((dist2 < minDist2) || (minDist2 < 0)))
       {

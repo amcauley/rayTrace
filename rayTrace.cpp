@@ -29,18 +29,11 @@
 
     - Pictures - let planes display bitmap images.
 
-    - More testing on kd-trees. Current scene doesn't seem to be going past 2nd level - may just
-      be this particular scene or may be bug. Needs more investigation. 
-
     - Implement triangle class, then triObj (a 3d object composed of a collection of triangles)
 
     - Create OBJ data reader that parses OBJ (ones that only use 3-point polygons) files into a triObj.
         OBJ format info: http://paulbourke.net/dataformats/obj/
         OBJ data files:  http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html
-
-    - Code cleanup - using a lot of temp rays, can probably start removing assuming the methods don't actually
-      modify them. Probably too late for adding const property (would be annoying to add), but can treat variables
-      like they were const just by convention. 
 
 */
 
