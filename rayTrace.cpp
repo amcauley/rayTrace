@@ -18,7 +18,7 @@
 
 /* TOP LEVEL TODO (8/11):
 
-    - FOV as a parameter sintead of manually setting image/eye params.
+    - FOV as a parameter instead of manually setting image/eye params.
 
     - Write parser so a scene can be input as a separate file listing sources/objects
 
@@ -26,6 +26,8 @@
 
     - Anti-aliasing. I like the stochastic version, but will probably use simple supersampling, at least
       to start with: http://paulbourke.net/miscellaneous/aliasing/
+
+    - Modify CheckRayHitExt to use KD tree. Forgot about this earlier, should update CheckRayHitExt method.
 
     - Pictures - let planes display bitmap images.
 
@@ -55,8 +57,8 @@ int main()
   #if 1
     /* Higher Res */
     Vec3 imgLoc = Vec3(-1.0f, 1.0f, -2.0f);
-    int w = 200, h = 200;
-    float pw = 0.01f, ph = 0.01f;
+    int w = 100, h = 100;
+    float pw = 0.02f, ph = 0.02f;
   #else
     /* Low Res, mainly for testing. */
     Vec3 imgLoc = Vec3(-0.5f, 0.5f, 0.0f);

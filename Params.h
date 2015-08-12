@@ -3,7 +3,7 @@
 #define PARAMS_H
 
 /* Max recursion depth for rays. */
-#define MAX_RAY_DEPTH (5)
+#define MAX_RAY_DEPTH (3)
 
 /* Depth of top level object kd-tree. Should be >= 1.*/
 #define TOP_LEVEL_OBJECT_TREE_DEPTH (3)
@@ -48,6 +48,10 @@ issues. */
   #endif //DEBUG_MEM_LEAK_ALLOC_CRASH
 #endif //DEBUG_MEM_LEAK_REPORT
 
+
+/* Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
+   ray samples and average them to get the final pixel value. >= 1. */
+#define PARAM_LIN_SUPERSAMPLE_FACTOR (1)
 
 /* Default overall scale factor (pre autoScale, if any). */
 #define PARAM_TOTAL_SCALE (1.0f)

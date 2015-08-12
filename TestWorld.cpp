@@ -45,7 +45,7 @@ void TestWorld::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** src
 void TestWorld::runTest(void)
 {
   /* Location of active pixel. */
-  Vec3 pLoc;
+  Vec3 pLoc, pixLoc;
 
 #ifdef STATUS_PRINTS_ENABLED
   float lastCompPercent = -11.0f, compPercent;
@@ -66,19 +66,34 @@ void TestWorld::runTest(void)
     for (pw = 0; pw < img->width; pw++)
     {
       img->getPixLoc(pLoc, pw, ph);
-
-      Vec3 rayVec = (pLoc - eye);
+      pixLoc = pLoc;
 
       Pixel* activePixel = img->getPix(pw, ph);
       activePixel->loc3 = pLoc;
 
+      /* Anti-aliasing supersampling loops over x and y supersample coords. The supersampling happens near the original
+         pixel location - biased to the left/bottom a little, but not a big deal. */
+      for (int sy = -(PARAM_LIN_SUPERSAMPLE_FACTOR - 1) / 2; sy < (PARAM_LIN_SUPERSAMPLE_FACTOR + 1) / 2; ++sy)
+      {
+        pixLoc.y = pLoc.y + (sy*(img->pHeight)) / PARAM_LIN_SUPERSAMPLE_FACTOR;
+        for (int sx = -(PARAM_LIN_SUPERSAMPLE_FACTOR - 1) / 2; sx < (PARAM_LIN_SUPERSAMPLE_FACTOR + 1) / 2; ++sx)
+        {
+          pixLoc.x = pLoc.x + (sx*(img->pWidth)) / PARAM_LIN_SUPERSAMPLE_FACTOR;
+          Vec3 rayVec = (pixLoc - eye);
+
 #ifdef DEBUG_GEN_PIXEL_REPORT
-      dbgPixLog.isEn = ((pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y));
+          dbgPixLog.isEn = ((pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y) &&
+            (sx == 0) && (sy == 0));
 #endif
 
-      Ray activeRay = Ray(pLoc, rayVec, 0, 0.0f);
-      traceRay(activeRay, activePixel->rgb, *this, sources, nSrc);
-      activePixel->rgb = activePixel->rgb*PARAM_TOTAL_SCALE;
+          Ray activeRay = Ray(pLoc, rayVec, 0, 0.0f);
+          Rgb tempRgb;
+          traceRay(activeRay, tempRgb, *this, sources, nSrc);
+          activePixel->rgb = activePixel->rgb + tempRgb;
+        }
+      }
+      /* Average over all supersample anti-alias values. */
+      activePixel->rgb = (activePixel->rgb*PARAM_TOTAL_SCALE)*(1.0f/(PARAM_LIN_SUPERSAMPLE_FACTOR*PARAM_LIN_SUPERSAMPLE_FACTOR));
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
       dbgPixLog.storeInfo(this, activePixel->rgb);
