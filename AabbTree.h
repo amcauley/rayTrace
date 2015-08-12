@@ -25,6 +25,8 @@ public:
 
   /* Recursive method for finding closest hit to input ray. */
   Object* getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out);
+  /* Recursive method for getting all objects hit by input ray. */
+  void getHitObjects(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr, int* objIdx, int maxObjs);
 };
 
 class Aabb3dTree {

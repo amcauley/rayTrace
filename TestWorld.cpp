@@ -48,7 +48,7 @@ void TestWorld::runTest(void)
   Vec3 pLoc, pixLoc;
 
 #ifdef STATUS_PRINTS_ENABLED
-  float lastCompPercent = -11.0f, compPercent;
+  float lastCompPercent = -6.0f, compPercent;
 #endif
 
   int pw, ph;
@@ -56,7 +56,7 @@ void TestWorld::runTest(void)
   {
 #ifdef STATUS_PRINTS_ENABLED
     compPercent = 100.0f*(float)ph / (float)img->height;
-    if (compPercent >= lastCompPercent + 10.0f)
+    if (compPercent >= lastCompPercent + 5.0f)
     {
       lastCompPercent = compPercent;
       std::cout << "runTest " << compPercent << "% complete...\n";
@@ -112,52 +112,9 @@ void TestWorld::runTest(void)
 #endif
 }
 
-/* Triple pointer :( */
+/* Search object tree for all hit objects. */
 void TestWorld::CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
 {
-  /* Similar to checkRayHit. This takes an input ray and returns any objects this
-     object deems it to hit. Use case: lower level object, ex. sphere, calls it's
-     parent object (TestWorld) to see if a shadow ray hits anything. */
-
-  /* For TestWorld, we'll check all known non-source objects for a collision. */
-  int n, q = 0;
-
-  /* hitPtr is set to NULL within checkRayHit to indicate no intersection. Otherwise hitPt will be
-  modified to hold the closest intersection point. */
-  Vec3 tempPt;
-
-  for (n = 0; n < nObj; n++)
-  {
-    Vec3* tempPtr = &tempPt;
-    objects[n]->checkRayHit(ray, &tempPtr);
-
-    if (tempPtr != NULL)
-    {    
-      if (*hitObjPtrArrayPtr == NULL)
-      {
-        /* Once we know there's going to hits, allocate array to store results. NULL terminate the obj ptr array. */
-       // *hitObjPtrArrayPtr = (Object**)malloc((nObj+1)*sizeof(Object*));
-        *hitObjPtrArrayPtr = new Object* [nObj+1];
-        *hitPtr = new Vec3[nObj];
-      }
-
-      /* TODO: Consider auto-sizing array. */
-      /* Populate array of pointers to hit objects and their (first) hit location. */
-      (*hitObjPtrArrayPtr)[q] = objects[n];
-      (*hitPtr)[q] = tempPt;
-      q++;
-    }
-  }
-
-  /* If no hits are detected, set the object/location arrays to NULL. */
-  if (q == 0)
-  {
-    *hitObjPtrArrayPtr = NULL;
-    *hitPtr = NULL;
-  }
-  else /* NULL-terminate array. */
-  {
-    (*hitObjPtrArrayPtr)[q] = NULL;
-  }
+  int objIdx = 0;
+  objTree.root->getHitObjects(ray, hitObjPtrArrayPtr, hitPtr, &objIdx, nObj);
 }
-

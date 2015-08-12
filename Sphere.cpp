@@ -156,7 +156,7 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     }
 
     outRgb = outRgb + 
-             (tempRgb*(1.0f - R)*distanceScaling + rgb*(1.0f - distanceScaling)*0.05f)*sParams.glassScale;
+             (tempRgb*(1.0f - R)*distanceScaling + rgb*(1.0f - distanceScaling)*0.01f)*sParams.glassScale;
     delete glassVec;
   }
 

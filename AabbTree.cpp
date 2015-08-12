@@ -302,3 +302,76 @@ Object* Aabb3dNode::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
   *dist2out = minDist2;
   return closestObjPtr;
 }
+
+
+void Aabb3dNode::getHitObjects(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr, int* objIdx, int maxObjs)
+{
+  /* Similar to checkRayHit. This takes an input ray and returns any objects this
+  object deems it to hit. Use case: lower level object, ex. sphere, calls its
+  parent object (TestWorld) to see if a shadow ray hits anything. */
+
+  /* For TestWorld, we'll search the kd tree for object collisions. */
+  int n = 0;
+
+  /* hitPtr is set to NULL within checkRayHit to indicate no intersection. Otherwise hitPt will be
+  modified to hold the closest intersection point. */
+  Vec3 tempPt;
+
+  for (int k = 0; k < numObj; ++k)
+  {
+    Vec3* tempPtr = &tempPt;
+    objs[k]->checkRayHit(ray, &tempPtr);
+
+    if (tempPtr != NULL)
+    {
+      if (*hitObjPtrArrayPtr == NULL)
+      {
+        /* Once we know there's going to hits, allocate array to store results. NULL terminate the obj ptr array. */
+        *hitObjPtrArrayPtr = new Object*[maxObjs + 1];
+        *hitPtr = new Vec3[maxObjs];
+      }
+
+      /* TODO: Consider auto-sizing array. */
+      /* Populate array of pointers to hit objects and their (first) hit location. */
+      (*hitObjPtrArrayPtr)[*objIdx] = objs[k];
+      (*hitPtr)[*objIdx] = tempPt;
+      (*objIdx)++;
+    }
+  }
+
+  /* Recursively call for left/right sub-trees. */
+  Vec3 hitPt;
+  if (left != NULL) 
+  {
+    Vec3* tempHitPtr = &hitPt;
+    leftBox.checkRayHit(ray, &tempHitPtr);
+
+    if (tempHitPtr != NULL) /* We hit the left box, so recurse. */
+    {
+      left->getHitObjects(ray, hitObjPtrArrayPtr, hitPtr, objIdx, maxObjs);
+    }   
+  }
+
+  if (right != NULL)
+  {
+    Vec3* tempHitPtr = &hitPt;
+    rightBox.checkRayHit(ray, &tempHitPtr);
+
+    if (tempHitPtr != NULL) /* We hit the left box, so recurse. */
+    {
+      right->getHitObjects(ray, hitObjPtrArrayPtr, hitPtr, objIdx, maxObjs);
+    }
+  }
+
+  /* If no hits are detected, set the object/location arrays to NULL. Optimization: Only need to do this
+  at top level of  tree, although it's not really an expensive operation. */
+  if (*objIdx == 0)
+  {
+    *hitObjPtrArrayPtr = NULL;
+    *hitPtr = NULL;
+  }
+  else /* NULL-terminate array. */
+  {
+    (*hitObjPtrArrayPtr)[*objIdx] = NULL;
+  }
+}

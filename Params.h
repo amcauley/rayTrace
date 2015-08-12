@@ -3,20 +3,14 @@
 #define PARAMS_H
 
 /* Max recursion depth for rays. */
-#define MAX_RAY_DEPTH (3)
+#define MAX_RAY_DEPTH (5)
+
+/* Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
+ray samples and average them to get the final pixel value. >= 1. */
+#define PARAM_LIN_SUPERSAMPLE_FACTOR (3)
 
 /* Depth of top level object kd-tree. Should be >= 1.*/
-#define TOP_LEVEL_OBJECT_TREE_DEPTH (3)
-
-//TODO: These don't currently do anything, fix that...
-/* Enable shadow ray processing. */
-#define ENABLE_SHADOW_RAY
-/* Enable reflection/mirror ray processing. */
-#define ENABLE_MIRROR_RAY
-/* Enable refraction/glass ray processing. */
-#define ENABLE_GLASS_RAY
-/* Enable ambient ray processing. */
-#define ENABLE_AMBIENT_RAY
+#define TOP_LEVEL_OBJECT_TREE_DEPTH (2)
 
 /* Print out processing progress info. */
 #define STATUS_PRINTS_ENABLED
@@ -39,7 +33,7 @@ issues. */
 //#define SKIP_IMAGE_AUTOSCALE
 
 /* Enable to create memory leak report at end of program. */
-//#define DEBUG_MEM_LEAK_REPORT
+#define DEBUG_MEM_LEAK_REPORT
 
 #ifdef DEBUG_MEM_LEAK_REPORT
   //#define DEBUG_MEM_LEAK_ALLOC_CRASH
@@ -48,19 +42,14 @@ issues. */
   #endif //DEBUG_MEM_LEAK_ALLOC_CRASH
 #endif //DEBUG_MEM_LEAK_REPORT
 
-
-/* Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
-   ray samples and average them to get the final pixel value. >= 1. */
-#define PARAM_LIN_SUPERSAMPLE_FACTOR (1)
-
 /* Default overall scale factor (pre autoScale, if any). */
 #define PARAM_TOTAL_SCALE (1.0f)
 
 /* Default strength of shadow ray contribution. Fraction from 0.0f to 1.0f. */
-#define PARAM_SHADOW_SCALE (0.4f)
+#define PARAM_SHADOW_SCALE (0.2f)
 
 /* Default strength of ambiant lighting contribution to object coloring. Fraction from 0.0f to 1.0f. */
-#define PARAM_AMBIENT_SCALE (0.2f)
+#define PARAM_AMBIENT_SCALE (0.1f)
 
 /* Default strength of reflections. */
 #define PARAM_REFLECTION_SCALE (0.4f)

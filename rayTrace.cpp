@@ -27,8 +27,6 @@
     - Anti-aliasing. I like the stochastic version, but will probably use simple supersampling, at least
       to start with: http://paulbourke.net/miscellaneous/aliasing/
 
-    - Modify CheckRayHitExt to use KD tree. Forgot about this earlier, should update CheckRayHitExt method.
-
     - Pictures - let planes display bitmap images.
 
     - Implement triangle class, then triObj (a 3d object composed of a collection of triangles)
@@ -57,8 +55,8 @@ int main()
   #if 1
     /* Higher Res */
     Vec3 imgLoc = Vec3(-1.0f, 1.0f, -2.0f);
-    int w = 100, h = 100;
-    float pw = 0.02f, ph = 0.02f;
+    int w = 1000, h = 1000;
+    float pw = 0.002f, ph = 0.002f;
   #else
     /* Low Res, mainly for testing. */
     Vec3 imgLoc = Vec3(-0.5f, 0.5f, 0.0f);
@@ -84,31 +82,31 @@ int main()
     /* ~~~ Objects ~~~ */
     /* Bottom Plane */
     Vec3 objLoc = Vec3(0.0f, 1.0f, 0.0f); //For a plane, this is actually the normal vector
-    Rgb objRgb = Rgb(255 / 255.0f, 0 / 255.0f, 0 / 255.0f);
+    Rgb objRgb = Rgb(0 / 255.0f, 0 / 255.0f, 0 / 255.0f);
     std::cout << "Creating obj 0\n";
     obj[0] = new Plane(objLoc, 1.5f, objRgb, 10.0f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
 
     /* Left Plane */
     objLoc = Vec3(1.0f, 0.0f, 0.0f);
-    objRgb = Rgb(0 / 255.0f, 255 / 255.0f, 0 / 255.0f);
+    objRgb = Rgb(60 / 255.0f, 60 / 255.0f, 60 / 255.0f);
     std::cout << "Creating obj 1\n";
     obj[1] = new Plane(objLoc, 5.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
 
     /* Right Plane */
     objLoc = Vec3(-1.0f, 0.0f, 0.0f);
-    objRgb = Rgb(0 / 255.0f, 0 / 255.0f, 255 / 255.0f);
+    objRgb = Rgb(100 / 255.0f, 100 / 255.0f, 100 / 255.0f);
     std::cout << "Creating obj 2\n";
     obj[2] = new Plane(objLoc, 5.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
 
     /* Top Plane */
     objLoc = Vec3(0.0f, -1.0f, 0.0f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 0 / 255.0f);
+    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
     std::cout << "Creating obj 3\n";
     obj[3] = new Plane(objLoc, 5.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
 
     /* Back Plane */
     objLoc = Vec3(0.0f, 0.0f, -1.0f);
-    objRgb = Rgb(0 / 255.0f, 255 / 255.0f, 255 / 255.0f);
+    objRgb = Rgb(255 / 255.0f, 0 / 255.0f, 0 / 255.0f);
     std::cout << "Creating obj 4\n";
     obj[4] = new Plane(objLoc, 50.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
 
@@ -126,13 +124,13 @@ int main()
 
     /* Sphere 2 */
     objLoc = Vec3(0.05f, 1.0f, 6.5f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 0 / 255.0f);
+    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
     std::cout << "Creating obj 7\n";
     obj[7] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.3f, 0.00f, 1.0f, 1.0f, 0.01f));
 
     /* Sphere 3 */
     objLoc = Vec3(-1.0f, -0.5f, 10.0f);
-    objRgb = Rgb(0 / 255.0f, 255 / 255.0f, 0 / 255.0f);
+    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
     std::cout << "Creating obj 8\n";
     obj[8] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.3f, 0.00f, 1.0f, 1.0f, 0.01f));
 
