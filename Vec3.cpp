@@ -66,7 +66,13 @@ Vec3 Vec3::normalize(void)
 
 float Vec3::getAngle(Vec3& b)
 {
-  float cosAng = dot(b) / sqrt(mag2()*b.mag2());
+  float denom = sqrt(mag2()*b.mag2());
+  if (denom == 0.0f)
+  {
+    return -1.0f;
+  }
+  float cosAng = dot(b) / denom;
+  cosAng = std::max(-1.0f, cosAng);
   cosAng = std::min(1.0f, cosAng);
   //std::cout << "dotProd = " << dot(b) << "\n";
 

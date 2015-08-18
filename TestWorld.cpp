@@ -52,7 +52,11 @@ void TestWorld::runTest(void)
 #endif
 
   int pw, ph;
+#ifndef REVERSE_PIX_ORDER
   for (ph = 0; ph < img->height; ph++)
+#else
+  for (ph = img->height-1; ph >= 0; ph--)
+#endif
   {
 #ifdef STATUS_PRINTS_ENABLED
     compPercent = 100.0f*(float)ph / (float)img->height;
@@ -63,7 +67,11 @@ void TestWorld::runTest(void)
     }
 #endif
 
+#ifndef REVERSE_PIX_ORDER
     for (pw = 0; pw < img->width; pw++)
+#else
+    for (pw = img->width-1; pw >= 0; pw--)
+#endif
     {
       img->getPixLoc(pLoc, pw, ph);
       pixLoc = pLoc;
@@ -84,6 +92,10 @@ void TestWorld::runTest(void)
 #ifdef DEBUG_GEN_PIXEL_REPORT
           dbgPixLog.isEn = ((pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y) &&
             (sx == 0) && (sy == 0));
+          if (dbgPixLog.isEn)
+          {
+            std::cout << "Dbg pix logging enabled\n";
+          }
 #endif
 
           Ray activeRay = Ray(pLoc, rayVec, 0, 0.0f);
@@ -97,7 +109,7 @@ void TestWorld::runTest(void)
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
       dbgPixLog.storeInfo(this, activePixel->rgb);
-      dbgPixLog.export(this, "dbgPixLog.txt");
+      dbgPixLog.export(this, "Output/dbgPixLog.txt");
     #ifdef MARK_DEBUG_PIXEL
       if (dbgPixLog.isEn)
       {

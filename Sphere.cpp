@@ -110,7 +110,6 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
 #endif
 
-
   Rgb tempRgb;
   callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
 
@@ -149,14 +148,9 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     float distanceScaling = powf(2.0f, -sqrt(ray.dist2)*0.25f);
     //std::cout << ray.dist2 << "\n";
 
-    if (distanceScaling > 1.0f)
-    {
-      std::cout << "distanceScaling error: " << distanceScaling << "\n";
-      assert(0);
-    }
-
     outRgb = outRgb + 
              (tempRgb*(1.0f - R)*distanceScaling + rgb*(1.0f - distanceScaling)*0.01f)*sParams.glassScale;
+
     delete glassVec;
   }
 
@@ -206,11 +200,17 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   from 0 to Pi, but since we don't expect angles greater than Pi/2 (otherwise would have
   occluded ourself), scale by ((Pi/2)-angle). */
   float angle = shadowDir.getAngle(norm);
+
+  if (angle < 0.0f)
+  {
+    return;
+  }
+
   float scale = 1.0f - (angle / (float)M_PI_2);
 
   /* Due to float math, we might have a few boundary cases of negative scaling. Set them to
   be occluded. */
-  if (scale < 0)
+  if (scale < 0.0f)
   {
     return;
   }

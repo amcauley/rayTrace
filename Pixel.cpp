@@ -34,6 +34,7 @@ Image::~Image()
 void Image::autoScale(void)
 {
   float maxVal = pixels[0].rgb.r;
+  float minVal = maxVal;
 
   int pW, pH;
   /* First pass - find min/max vals. */
@@ -45,6 +46,9 @@ void Image::autoScale(void)
       maxVal = std::max(pixVal->r, maxVal);
       maxVal = std::max(pixVal->g, maxVal);
       maxVal = std::max(pixVal->b, maxVal);
+      minVal = std::min(pixVal->r, minVal);
+      minVal = std::min(pixVal->g, minVal);
+      minVal = std::min(pixVal->b, minVal);
     }
   }
 
@@ -53,7 +57,7 @@ void Image::autoScale(void)
 #ifdef SKIP_IMAGE_AUTOSCALE
   scaleVal = 1.0f;
 #endif
-  std::cout << "Image autoscale by " << scaleVal << "\n";
+  std::cout << "Image autoscale by " << scaleVal << ", min " << minVal << ", max " << maxVal << "\n";
 
   /* Second pass - scale values. */
   for (pH = 0; pH < height; pH++)

@@ -4,8 +4,6 @@
 #include "Params.h"
 #include "TestWorld.h"
 
-extern TestWorld* temp_globalTestWorld;
-
 Object::Object() {};
 Object::~Object() 
 { 

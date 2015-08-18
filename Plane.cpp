@@ -53,8 +53,16 @@ Plane::Plane(Vec3& normV, float offset, Rgb& c, float i, ScaleParams s):
 
 void Plane::checkRayHit(Ray& ray, Vec3** hitPtr)
 {
-  float tt;
-  tt = (loc3.dot(ray.loc3)*(-1.0f) - d) / (loc3.dot(ray.vec3));
+  float tt, denomDotProd;
+
+  denomDotProd = loc3.dot(ray.vec3);
+  if (denomDotProd == 0.0f)
+  {
+    *hitPtr = NULL;
+    return;
+  }
+
+  tt = (loc3.dot(ray.loc3)*(-1.0f) - d) / denomDotProd;
 
   if (tt >= 0)
   {
@@ -117,7 +125,7 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
     dbgPixLog.restoreLvl();
 #endif
 
-    //outRgb = outRgb + tempRgb*R*PARAM_REFLECTION_SCALE;
+    outRgb = outRgb + tempRgb*sParams.mirrorScale;
   }
   /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
   /* No refraction for planes, which we consider to have either no thickness

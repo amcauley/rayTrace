@@ -15,17 +15,17 @@
 #include "TestWorld.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "SceneParser.h"
 
-/* TOP LEVEL TODO (8/11):
+/* TOP LEVEL TODO (8/18):
 
     - FOV as a parameter instead of manually setting image/eye params.
 
-    - Write parser so a scene can be input as a separate file listing sources/objects
+    - Optimize code. One easy one - if scale param for a ray type is 0, don't bother tracing that ray
+      (ex. if mirror scaling is 0, don't trace out mirror rays). This page looks useful for profiling:
+      https://msdn.microsoft.com/en-US/library/ms182372.aspx?f=255&MSPPError=-2147217396
 
     - Multiple sources
-
-    - Anti-aliasing. I like the stochastic version, but will probably use simple supersampling, at least
-      to start with: http://paulbourke.net/miscellaneous/aliasing/
 
     - Pictures - let planes display bitmap images.
 
@@ -35,9 +35,8 @@
         OBJ format info: http://paulbourke.net/dataformats/obj/
         OBJ data files:  http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html
 
+    - Remove obj list from test world / debug class. It's been made obsolete by the object kd tree.
 */
-
-TestWorld* temp_globalTestWorld;
 
 int main()
 {
@@ -46,109 +45,26 @@ int main()
 #endif
 
   {
-    /* Image definition. */
-    Vec3 imgNorm = Vec3(0.0f, 0.0f, 1.0f);
 
-    /* Eye location. */
-    Vec3 eye = Vec3(0.0f, 0.0f, -10.0f);
+    Image* img;
+    Vec3* eye;
+    int nObj = 0, nSrc = 0;
+    Object **obj = NULL, **src = NULL;
 
-  #if 1
-    /* Higher Res */
-    Vec3 imgLoc = Vec3(-1.0f, 1.0f, -2.0f);
-    int w = 1000, h = 1000;
-    float pw = 0.002f, ph = 0.002f;
-  #else
-    /* Low Res, mainly for testing. */
-    Vec3 imgLoc = Vec3(-0.5f, 0.5f, 0.0f);
-    int w = 10, h = 10;
-    float pw = 0.1f, ph = 0.1f;
-  #endif
-
-    Image img = Image(imgLoc, imgNorm, w, h, pw, ph);
-
-
-    int nObj = 10, nSrc = 1;
-    Object** obj = new Object*[nObj];
-    Object** src = new Object*[nSrc];
-
-    /* ~~~ Source ~~~ */
-    Vec3 srcLoc = Vec3(-5.0f, 5.0f, -10.0f);
-    Rgb srcRgb = Rgb(214 / 255.0f, 227 / 255.0f, 190 / 255.0f);
-    std::cout << "Creating obj " << nObj - 1 << "\n";
-    src[0] = new SimpleSource(srcLoc, 0.5f, srcRgb, 1.0f, ScaleParams(1.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-    /* Source is also an object. */
-    obj[nObj - 1] = src[0];
-
-    /* ~~~ Objects ~~~ */
-    /* Bottom Plane */
-    Vec3 objLoc = Vec3(0.0f, 1.0f, 0.0f); //For a plane, this is actually the normal vector
-    Rgb objRgb = Rgb(0 / 255.0f, 0 / 255.0f, 0 / 255.0f);
-    std::cout << "Creating obj 0\n";
-    obj[0] = new Plane(objLoc, 1.5f, objRgb, 10.0f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
-
-    /* Left Plane */
-    objLoc = Vec3(1.0f, 0.0f, 0.0f);
-    objRgb = Rgb(60 / 255.0f, 60 / 255.0f, 60 / 255.0f);
-    std::cout << "Creating obj 1\n";
-    obj[1] = new Plane(objLoc, 5.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
-
-    /* Right Plane */
-    objLoc = Vec3(-1.0f, 0.0f, 0.0f);
-    objRgb = Rgb(100 / 255.0f, 100 / 255.0f, 100 / 255.0f);
-    std::cout << "Creating obj 2\n";
-    obj[2] = new Plane(objLoc, 5.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
-
-    /* Top Plane */
-    objLoc = Vec3(0.0f, -1.0f, 0.0f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
-    std::cout << "Creating obj 3\n";
-    obj[3] = new Plane(objLoc, 5.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
-
-    /* Back Plane */
-    objLoc = Vec3(0.0f, 0.0f, -1.0f);
-    objRgb = Rgb(255 / 255.0f, 0 / 255.0f, 0 / 255.0f);
-    std::cout << "Creating obj 4\n";
-    obj[4] = new Plane(objLoc, 50.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
-
-    /* Front (behind the eye) Plane, seen in reflections */
-    objLoc = Vec3(0.0f, 0.0f, 1.0f);
-    objRgb = Rgb(255 / 255.0f, 0 / 255.0f, 255 / 255.0f);
-    std::cout << "Creating obj 5\n";
-    obj[5] = new Plane(objLoc, 50.0f, objRgb, 1.8f, ScaleParams(1.05f, 0.6f, 0.0f, 0.0f, 0.3f));
-
-    /* Sphere 1 */
-    objLoc = Vec3(0.5f, -0.5f, 3.5f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
-    std::cout << "Creating obj 6\n";
-    obj[6] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.2f, 0.00f, 1.0f, 1.0f, 0.01f));
-
-    /* Sphere 2 */
-    objLoc = Vec3(0.05f, 1.0f, 6.5f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
-    std::cout << "Creating obj 7\n";
-    obj[7] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.3f, 0.00f, 1.0f, 1.0f, 0.01f));
-
-    /* Sphere 3 */
-    objLoc = Vec3(-1.0f, -0.5f, 10.0f);
-    objRgb = Rgb(255 / 255.0f, 255 / 255.0f, 255 / 255.0f);
-    std::cout << "Creating obj 8\n";
-    obj[8] = new Sphere(objLoc, 1.0f, objRgb, 1.5f, ScaleParams(1.3f, 0.00f, 1.0f, 1.0f, 0.01f));
-
+    sceneParser("Scenes/SphereArray.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
 
     /* ~~~ Start rendering. ~~~ */
     std::cout << "Creating test world\n";
-    TestWorld world = TestWorld(obj, nObj, src, nSrc, eye, &img, 1.0f);
-    temp_globalTestWorld = &world; //debugging variable
+    TestWorld world = TestWorld(obj, nObj, src, nSrc, *eye, img, 1.0f);
     world.runTest();
 
     /* Delete allocated objects and sources. */
-    int j;
-    for (j = 0; j < nObj; j++)
+    /* First delete objects. */
+    for (int j = 0; j < nObj; j++)
     {
       bool skipThisObj = false;
-      int k;
-      /* Don't delete again if we already deleted as part of objects list. */
-      for (k = 0; k < nObj; k++)
+      /* Don't delete if we're going to delete it in the sources list later. */
+      for (int k = 0; k < nSrc; k++)
       {
         if (obj[j] == src[k])
         {
@@ -167,7 +83,7 @@ int main()
     /* delete the array itself. */
     delete[] obj;
 
-    for (j = 0; j < nSrc; j++)
+    for (int j = 0; j < nSrc; j++)
     {
       std::cout << "Del src " << j << "\n";
       delete src[j];
@@ -175,8 +91,11 @@ int main()
     /* delete the array itself. */
     delete[] src;
 
-    img.autoScale();
-    img.exportBitmap("rayTraceOutput.bmp");
+    img->autoScale();
+    img->exportBitmap("Output/rayTraceOutput.bmp");
+
+    delete img;
+    delete eye;
 
     std::cout << "End\n";
   }
