@@ -102,30 +102,33 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
   ray.vec3.normalize();
   Rgb tempRgb;
 
-  if (loc3.dot(ray.vec3) < 0.0f) /* Make sure ray isn't coming from wrong direction due to precision issues. */
+  if (sParams.mirrorScale > 0.0f)
   {
-    float R = 1.0f;
-    physRefraction(ray.vec3, loc3, callingObj.ior, ior, mirrorVec, &glassVec, R);
-
-    if (glassVec != NULL)
+    if (loc3.dot(ray.vec3) < 0.0f) /* Make sure ray isn't coming from wrong direction due to precision issues. */
     {
-      delete glassVec;
+      float R = 1.0f;
+      physRefraction(ray.vec3, loc3, callingObj.ior, ior, mirrorVec, &glassVec, R);
+
+      if (glassVec != NULL)
+      {
+        delete glassVec;
+      }
+
+      Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+      dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
+#endif
+
+      callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+      dbgPixLog.storeInfo(this, tempRgb);
+      dbgPixLog.restoreLvl();
+#endif
+
+      outRgb = outRgb + tempRgb*sParams.mirrorScale;
     }
-    
-    Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
-
-#ifdef DEBUG_GEN_PIXEL_REPORT
-    dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
-#endif
-
-    callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
-
-#ifdef DEBUG_GEN_PIXEL_REPORT
-    dbgPixLog.storeInfo(this, tempRgb);
-    dbgPixLog.restoreLvl();
-#endif
-
-    outRgb = outRgb + tempRgb*sParams.mirrorScale;
   }
   /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
   /* No refraction for planes, which we consider to have either no thickness

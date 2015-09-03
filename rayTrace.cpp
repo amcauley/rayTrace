@@ -17,13 +17,13 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (8/18):
+/* TOP LEVEL TODO (9/2):
+
+    - Shadow rays for Triangle class
+
+    - Bi-directional normal support for Triangles (Triangle is hit from either side)
 
     - FOV as a parameter instead of manually setting image/eye params.
-
-    - Optimize code. One easy one - if scale param for a ray type is 0, don't bother tracing that ray
-      (ex. if mirror scaling is 0, don't trace out mirror rays). This page looks useful for profiling:
-      https://msdn.microsoft.com/en-US/library/ms182372.aspx?f=255&MSPPError=-2147217396
 
     - Multiple sources
 
@@ -51,7 +51,7 @@ int main()
     int nObj = 0, nSrc = 0;
     Object **obj = NULL, **src = NULL;
 
-    sceneParser("Scenes/SphereArray.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
+    sceneParser("Scenes/TestScene.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
 
     /* ~~~ Start rendering. ~~~ */
     std::cout << "Creating test world\n";

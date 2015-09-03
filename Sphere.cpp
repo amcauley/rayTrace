@@ -86,72 +86,80 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   Vec3 norm = ray.loc3 - loc3;
   norm.normalize();
 
-  /* Determine if this ray is from inside the sphere (internal ray) or external. Internal rays
-  originate from a refracted ray traveling inside the sphere. */
-  bool isInternal = (ray.vec3.dot(norm) > 0.0f);
-
-  /*~~~~~~~~~~ Reflection (Mirror) Ray Proc ~~~~~~~~~~*/
-  Vec3 mirrorVec, *glassVec = NULL;
-  ray.vec3.normalize();
-
-  float R;
-  if (isInternal)
-  {
-    physRefraction(ray.vec3, norm*(-1.0f), ior, callingObj.ior, mirrorVec, &glassVec, R);
-  }
-  else
-  {
-    physRefraction(ray.vec3, norm, callingObj.ior, ior, mirrorVec, &glassVec, R);
-  }
-
-  Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
-
-#ifdef DEBUG_GEN_PIXEL_REPORT
-  dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
-#endif
-
   Rgb tempRgb;
-  callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
 
-#ifdef DEBUG_GEN_PIXEL_REPORT
-  dbgPixLog.storeInfo(this, tempRgb);
-  dbgPixLog.restoreLvl();
-#endif
-
-  if (glassVec == NULL)
+  if ((sParams.glassScale > 0.0f) || (sParams.mirrorScale > 0.0f))
   {
-    /* TIR: no transmitted/glass wave. */
-    R = 1.0f;
-  }
+    /* Determine if this ray is from inside the sphere (internal ray) or external. Internal rays
+    originate from a refracted ray traveling inside the sphere. */
+    bool isInternal = (ray.vec3.dot(norm) > 0.0f);
 
-  outRgb = outRgb + tempRgb*R*sParams.mirrorScale;
+    /*~~~~~~~~~~ Reflection (Mirror) Ray Proc ~~~~~~~~~~*/
+    Vec3 mirrorVec, *glassVec = NULL;
+    ray.vec3.normalize();
 
-  /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
+    float R;
+    if (isInternal)
+    {
+      physRefraction(ray.vec3, norm*(-1.0f), ior, callingObj.ior, mirrorVec, &glassVec, R);
+    }
+    else
+    {
+      physRefraction(ray.vec3, norm, callingObj.ior, ior, mirrorVec, &glassVec, R);
+    }
 
-  /* Proceed with glassy calculations if no total internal reflection. Not that if this is an
-  internal ray, the "glassy" ray is actually in the non-sphere-glass medium, so the name can
-  be a little confusing in some situations. */
-  if (glassVec != NULL)
-  {
+    if (sParams.mirrorScale > 0.0f)
+    {
+      Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
+
 #ifdef DEBUG_GEN_PIXEL_REPORT
-    dbgPixLog.nextLvl(RAY_TYPE_GLASS);
+      dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
 #endif
 
-    Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1, 0.0f);
-    callingObj.traceRay(glassRay, tempRgb, callingObj, srcList, 1);
+      callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
-    dbgPixLog.storeInfo(this, tempRgb);
-    dbgPixLog.restoreLvl();
+      dbgPixLog.storeInfo(this, tempRgb);
+      dbgPixLog.restoreLvl();
+#endif
+    }
+
+    if (glassVec == NULL)
+    {
+      /* TIR: no transmitted/glass wave. */
+      R = 1.0f;
+    }
+
+    outRgb = outRgb + tempRgb*R*sParams.mirrorScale;
+
+    /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
+
+    /* Proceed with glassy calculations if no total internal reflection. Not that if this is an
+    internal ray, the "glassy" ray is actually in the non-sphere-glass medium, so the name can
+    be a little confusing in some situations. */
+    if (glassVec != NULL)
+    {
+      if (sParams.glassScale > 0.0f)
+      {
+#ifdef DEBUG_GEN_PIXEL_REPORT
+        dbgPixLog.nextLvl(RAY_TYPE_GLASS);
 #endif
 
-    float distanceScaling = powf(2.0f, -sqrt(ray.dist2)*0.25f);
-    //std::cout << ray.dist2 << "\n";
+        Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1, 0.0f);
+        callingObj.traceRay(glassRay, tempRgb, callingObj, srcList, 1);
 
-    outRgb = outRgb + 
-             (tempRgb*(1.0f - R)*distanceScaling + rgb*(1.0f - distanceScaling)*0.01f)*sParams.glassScale;
+#ifdef DEBUG_GEN_PIXEL_REPORT
+        dbgPixLog.storeInfo(this, tempRgb);
+        dbgPixLog.restoreLvl();
+#endif
 
-    delete glassVec;
+        float distanceScaling = powf(2.0f, -sqrt(ray.dist2)*0.25f);
+
+        outRgb = outRgb +
+          (tempRgb*(1.0f - R)*distanceScaling + rgb*(1.0f - distanceScaling)*0.01f)*sParams.glassScale;
+      }
+      delete glassVec;
+    }
   }
 
   /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/

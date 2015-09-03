@@ -5,6 +5,7 @@
 #include <string>
 #include "LightSources.h"
 #include "Plane.h"
+#include "Triangle.h"
 
 void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs, int* nSrc, Image** img, Vec3** eye)
 {
@@ -51,6 +52,11 @@ void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs
       ++*nObj;
       std::cout << "Plane detected \n";
     }
+    else if (curWord == "TR") /* Triangle: TR x1 y1 z1 x2 y2 z2 x3 y3 z3 R G B totScale shadScale mirScale glasScale ambScale */
+    {
+      ++*nObj;
+      std::cout << "Triangle detected \n";
+    }
     else /* Default case: */
     {
       continue;
@@ -93,6 +99,13 @@ void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs
       lineStream >> normX >> normY >> normZ >> offset >> R >> G >> B >> indRef >> totScale >> shadScale >> mirScale >> glasScale >> ambScale;
       (*objs)[curObj++] = new Plane(Vec3(normX, normY, normZ), offset, Rgb(R, G, B)*(1.0f / 255.0f), indRef, ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
       std::cout << "Plane created \n";
+    }
+    else if (curWord == "TR") /* Triangle: TR x1 y1 z1 x2 y2 z2 x3 y3 z3 R G B totScale shadScale mirScale glasScale ambScale */
+    {
+      float x1, y1, z1, x2, y2, z2, x3, y3, z3, R, G, B, totScale, shadScale, mirScale, glasScale, ambScale;
+      lineStream >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3 >> R >> G >> B >> totScale >> shadScale >> mirScale >> glasScale >> ambScale;
+      (*objs)[curObj++] = new Triangle(Vec3(x1, y1, z1), Vec3(x2, y2, z2), Vec3(x3, y3, z3), Rgb(R, G, B)*(1.0f / 255.0f), ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
+      std::cout << "Triangle created \n";
     }
     else /* Default case: */
     {

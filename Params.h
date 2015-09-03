@@ -3,7 +3,7 @@
 #define PARAMS_H
 
 /* Max recursion depth for rays. */
-#define MAX_RAY_DEPTH (11)
+#define MAX_RAY_DEPTH (1)
 
 /* Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
 ray samples and average them to get the final pixel value. >= 1. */
@@ -24,8 +24,8 @@ issues. */
    NOTE: debug log is stored globally, which may trigger false memory leak report. */
 //#define DEBUG_GEN_PIXEL_REPORT
 
-#define DEBUG_PIXEL_REPORT_X (100)  //Pixel width coord
-#define DEBUG_PIXEL_REPORT_Y (183)  //Pixel height coord
+#define DEBUG_PIXEL_REPORT_X (50)  //Pixel width coord
+#define DEBUG_PIXEL_REPORT_Y (0)  //Pixel height coord
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
   /* Enable to mark the debug pixel white for easier locating. */
@@ -46,12 +46,12 @@ issues. */
 #ifdef DEBUG_MEM_LEAK_REPORT
   //#define DEBUG_MEM_LEAK_ALLOC_CRASH
   #ifdef DEBUG_MEM_LEAK_ALLOC_CRASH
-    #define DEBUG_MEM_LEAK_ALLOC_ADDR (142)
+    #define DEBUG_MEM_LEAK_ALLOC_ADDR (274)
   #endif //DEBUG_MEM_LEAK_ALLOC_CRASH
 #endif //DEBUG_MEM_LEAK_REPORT
 
 /* Default overall scale factor (pre autoScale, if any). */
-#define PARAM_TOTAL_SCALE (5.0f)
+#define PARAM_TOTAL_SCALE (1.0f)
 
 /* Default strength of shadow ray contribution. Fraction from 0.0f to 1.0f. */
 #define PARAM_SHADOW_SCALE (0.2f)

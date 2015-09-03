@@ -55,7 +55,15 @@ float Vec3::dot(const Vec3& b)
   return x*b.x + y*b.y + z*b.z;
 }
 
-Vec3 Vec3::normalize(void)
+Vec3 Vec3::cross(const Vec3& b)
+{
+  return Vec3(
+    y*b.z - z*b.y,
+    z*b.x - x*b.z,
+    x*b.y - y*b.x);
+}
+
+Vec3& Vec3::normalize(void)
 {
   float norm = sqrt(mag2());
   x /= norm;
