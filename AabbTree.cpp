@@ -285,7 +285,7 @@ Object* Aabb3dNode::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
     Vec3* hitPtr = &hitPt;
     rightBox.checkRayHit(ray, &hitPtr);
 
-    if (hitPtr != NULL) /* We hit the left box, so recurse and get the closest point in it. */
+    if (hitPtr != NULL) /* We hit the right box, so recurse and get the closest point in it. */
     {
       Vec3 closeHit;
       tempObj = right->getClosestObj(ray, closeHit, &dist2);

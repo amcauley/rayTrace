@@ -12,16 +12,14 @@ class Triangle : public Object {
     /* 3 vertices of the triangle. */
     Vec3 pts[3];
 
-    /* Normal vector - not necessarily any notion of outward or inward facing since this triangle doesn't know
-       about any higher level object it may be a part of.Objects that are constructed of Triangles
-       may or may not force their normals to be inward / outward facing. */
+    /* Normal vector - the sign of this can flip depending on the direction of the incoming ray. */
     Vec3 norm;
+
+    /* Offset distance for the plane containing pts[]. If the normal distance flips, so does this. */
+    float d;
 
     /* normMajorAxis - strongest component of the norm. */
     AxisEnum normMajorAxis;
-
-    /* Offset distance for the plane containing pts[]. */
-    float d;
 
     Triangle();
     Triangle(Vec3 pt1, Vec3 pt2, Vec3 pt3, Rgb& c, ScaleParams& s);

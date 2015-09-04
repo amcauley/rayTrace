@@ -17,11 +17,20 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (9/2):
+/* TOP LEVEL TODO (9/4):
 
     - Shadow rays for Triangle class
 
-    - Bi-directional normal support for Triangles (Triangle is hit from either side)
+    - Put shadow ray computations (and maybe mirror/glass) into functions since they're very similar
+      between different objects.
+
+    - Optimize Triangle routines
+
+    - Gate shadow processing if shadow scaling is 0
+
+    - Test Triangle debug logging / check for mem leaks
+
+    - Look into compiler optimization flags
 
     - FOV as a parameter instead of manually setting image/eye params.
 

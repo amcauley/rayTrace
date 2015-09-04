@@ -1,4 +1,5 @@
 #include "Triangle.h"
+#include "DbgLog.h"
 #include <assert.h>
 
 Triangle::Triangle() {}
@@ -13,7 +14,7 @@ Triangle::Triangle(Vec3 pt1, Vec3 pt2, Vec3 pt3, Rgb& c, ScaleParams& s):
   /* Compute and store centroid. */
   loc3 = (pt1 + pt2 + pt3)*(1.0f / 3.0f);
 
-  /* Find the normal vector. */
+  /* Find the normal vector. Note that the sign can later flip in the checkRayHit method. */
   norm = (pt2 - pt1).cross(pt3 - pt1);
   norm.normalize();
 
@@ -101,6 +102,13 @@ void Triangle::checkRayHit(Ray& ray, Vec3** hitPtr)
 {
   float tt, denomDotProd;
 
+  /* We want these to be hittable from either face, so flip the normal vector (and offset direction) if needed. */
+  if (norm.dot(ray.vec3) > 0.0f)
+  {
+    norm = norm*(-1.0f);
+    d = -d;
+  }
+
   denomDotProd = norm.dot(ray.vec3);
   if (denomDotProd == 0.0f)
   {
@@ -181,6 +189,96 @@ void Triangle::checkRayHit(Ray& ray, Vec3** hitPtr)
 
 void Triangle::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {
-  /* Default rgb to ambiant. */
+  /* Start with ambient contribution. */
   outRgb = rgb*sParams.ambientScale;
+
+  /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
+  if (ray.depth >= MAX_RAY_DEPTH)
+  {
+    return;
+  }
+
+  Rgb tempRgb;
+
+  /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
+  Vec3 shadowDir = (srcList[0]->loc3 - ray.loc3);
+  Ray shadowRay = Ray(ray.loc3, shadowDir, ray.depth + 1, 0.0f);
+
+  Object** objList = NULL;
+  Vec3* objHitPts = NULL;
+
+  /* Generate list of objects hit by the shadow ray and the coordinates of intersections. */
+  callingObj.CheckRayHitExt(shadowRay, &objList, &objHitPts);
+
+  if (objList != NULL)
+  {
+    int n = 0;
+    Object* currObjPtr = objList[0];
+    /* A source can't occlude itself from this sphere. */
+    while ((currObjPtr != NULL) && (currObjPtr != srcList[0]))
+    {
+      /* While checking for occlusions, we'll disregard shadow ray intersections with
+      current object itself if the intersection isn't different (within tolerances)
+      of the initial ray/object intersection. */
+      if (currObjPtr != this)
+      {
+        Vec3 dist2Src = srcList[0]->loc3 - ray.loc3;
+        Vec3 dist2Obj = objHitPts[n] - ray.loc3;
+        if (dist2Src.mag2() > dist2Obj.mag2())
+        {
+          delete objList; delete objHitPts;
+          return;
+        }
+      }
+      else /* Ray hit ourself */
+      {
+        delete objList; delete objHitPts;
+        return;
+      }
+      currObjPtr = objList[++n];
+    }
+    delete objList; delete objHitPts;
+  }
+
+  /* No obstructions on the shadow ray. Calculate angle between normal vec and shadow
+  ray, then scale rgb intensity accordingly (closer to normal = more intense). Normal
+  direction is from center of sphere to the impact ray intersection pt. Angle is in radians,
+  from 0 to Pi, but since we don't expect angles greater than Pi/2 (otherwise would have
+  occluded ourself), scale by ((Pi/2)-angle). */
+
+  /* We want these to be hittable from either face, so flip the normal vector (and offset direction) if needed. */
+  if (norm.dot(shadowDir) < 0.0f)
+  {
+    norm = norm*(-1.0f);
+    d = -d;
+  }
+
+  float angle = shadowDir.getAngle(norm);
+  float scale = 1.0f - (angle / (float)M_PI_2);
+
+  //std::cout << angle << " " << scale << std::endl;
+
+  /* Due to float math, we might have a few boundary cases of negative scaling. Set them to
+  be occluded. */
+  if (scale < 0)
+  {
+    return;
+  }
+  else if (scale > 1.0f) /* Guard against rounding issues by clamping max scale factor. */
+  {
+    scale = 1.0f;
+  }
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.nextLvl(RAY_TYPE_SHADOW);
+#endif
+
+  srcList[0]->traceRay(shadowRay, tempRgb, callingObj, srcList, 0);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.storeInfo(this, tempRgb);
+  dbgPixLog.restoreLvl();
+#endif
+
+  outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
 }
