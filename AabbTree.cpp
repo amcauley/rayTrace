@@ -185,11 +185,16 @@ void Aabb3dNode::buildNode(Object** inputObjs, int nObj, int lvl, int maxLvl)
 
     /* Objects are sorted into appropriate arrays. Recurse to form lower levels of the tree. This
     dynamic memory will be delete during this current node's destructor. */
-    left = new Aabb3dNode;
-    left->buildNode(leftObjs, nLeft, lvl + 1, maxLvl);
-
-    right = new Aabb3dNode;
-    right->buildNode(rightObjs, nRight, lvl + 1, maxLvl);
+    if (nLeft > 0)
+    {
+      left = new Aabb3dNode;
+      left->buildNode(leftObjs, nLeft, lvl + 1, maxLvl);
+    }
+    if (nRight > 0)
+    {
+      right = new Aabb3dNode;
+      right->buildNode(rightObjs, nRight, lvl + 1, maxLvl);
+    }
 
     /* Done with remaining local dynamic memory for this node. */
     delete[] leftObjs;

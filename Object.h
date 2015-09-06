@@ -31,6 +31,7 @@ class Object {
     Object();
     virtual ~Object();
     Object(Vec3& loc, Rgb& rgb, float ior, ScaleParams& s);
+    Object& operator= (Object& otherObj);
 
     virtual void checkRayHit(Ray& ray, Vec3** hitPtr);
     virtual void CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);

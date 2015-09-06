@@ -160,18 +160,18 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
         Vec3 dist2Obj = objHitPts[n] - ray.loc3;
         if (dist2Src.mag2() > dist2Obj.mag2())
         {
-          delete objList; delete objHitPts;
+          delete[] objList; delete[] objHitPts;
           return;
         }
       }
       else /* Ray hit ourself */
       {
-        delete objList; delete objHitPts;
+        delete[] objList; delete[] objHitPts;
         return;
       }
       currObjPtr = objList[++n];
     }
-    delete objList; delete objHitPts;
+    delete[] objList; delete[] objHitPts;
   }
 
   /* No obstructions on the shadow ray. Calculate angle between normal vec and shadow

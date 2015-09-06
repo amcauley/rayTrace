@@ -3,14 +3,16 @@
 #define PARAMS_H
 
 /* Max recursion depth for rays. */
-#define MAX_RAY_DEPTH (2)
+#define MAX_RAY_DEPTH (4)
 
 /* Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
 ray samples and average them to get the final pixel value. >= 1. */
-#define PARAM_LIN_SUPERSAMPLE_FACTOR (3)
+#define PARAM_LIN_SUPERSAMPLE_FACTOR (1)
 
 /* Depth of top level object kd-tree. Should be >= 1.*/
 #define TOP_LEVEL_OBJECT_TREE_DEPTH (3)
+/* Tree depth for TriObj objects. */
+#define TRI_TREE_DEPTH (3)
 
 /* Print out processing progress info. */
 #define STATUS_PRINTS_ENABLED
@@ -24,8 +26,8 @@ issues. */
    NOTE: debug log is stored globally, which may trigger false memory leak report. */
 //#define DEBUG_GEN_PIXEL_REPORT
 
-#define DEBUG_PIXEL_REPORT_X (10)  //Pixel width coord
-#define DEBUG_PIXEL_REPORT_Y (40)  //Pixel height coord
+#define DEBUG_PIXEL_REPORT_X (36)  //Pixel width coord
+#define DEBUG_PIXEL_REPORT_Y (100)  //Pixel height coord
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
   /* Enable to mark the debug pixel white for easier locating. */

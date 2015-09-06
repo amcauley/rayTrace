@@ -91,7 +91,7 @@ void TestWorld::runTest(void)
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
           dbgPixLog.isEn = ((pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y) &&
-            (sx == 0) && (sy == 0));
+            1);//(sx == 0) && (sy == 0));
           if (dbgPixLog.isEn)
           {
             std::cout << "Dbg pix logging enabled\n";

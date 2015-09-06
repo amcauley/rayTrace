@@ -6,6 +6,7 @@
 #include "LightSources.h"
 #include "Plane.h"
 #include "Triangle.h"
+#include "TriObj.h"
 
 void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs, int* nSrc, Image** img, Vec3** eye)
 {
@@ -57,6 +58,11 @@ void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs
       ++*nObj;
       std::cout << "Triangle detected \n";
     }
+    else if (curWord == "TO") /* Triangle Object: TO fileName x y z R G B indRef totScale shadScale mirScale glasScale ambScale */
+    {
+      ++*nObj;
+      std::cout << "TriObj detected \n";
+    }
     else /* Default case: */
     {
       continue;
@@ -106,6 +112,14 @@ void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs
       lineStream >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3 >> R >> G >> B >> totScale >> shadScale >> mirScale >> glasScale >> ambScale;
       (*objs)[curObj++] = new Triangle(Vec3(x1, y1, z1), Vec3(x2, y2, z2), Vec3(x3, y3, z3), Rgb(R, G, B)*(1.0f / 255.0f), ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
       std::cout << "Triangle created \n";
+    }
+    else if (curWord == "TO") /* Triangle Object: TO fileName x y z R G B indRef totScale shadScale mirScale glasScale ambScale */
+    {
+      std::string triObjPath;
+      float x, y, z, R, G, B, indRef, totScale, shadScale, mirScale, glasScale, ambScale;
+      lineStream >> triObjPath >> x >> y >> z >> R >> G >> B >> indRef >> totScale >> shadScale >> mirScale >> glasScale >> ambScale;
+      (*objs)[curObj++] = new TriObj(triObjPath, Vec3(x, y, z), Rgb(R, G, B)*(1.0f / 255.0f), indRef, ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
+      std::cout << "TriObj created \n";
     }
     else /* Default case: */
     {

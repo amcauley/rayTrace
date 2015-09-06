@@ -176,7 +176,7 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   {
     int n = 0;
     Object* currObjPtr = objList[0];
-    /* A source can't occlude itself from this sphere. */
+    /* A source can't occlude itself from this sphere. List is NULL terminated. */
     while ((currObjPtr != NULL) && (currObjPtr != srcList[0]))
     {
       /* While checking for occlusions, we'll disregard shadow ray intersections with
@@ -188,18 +188,18 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
         Vec3 dist2Obj = objHitPts[n] - ray.loc3;
         if (dist2Src.mag2() > dist2Obj.mag2())
         {
-          delete objList; delete objHitPts;
+          delete[] objList; delete[] objHitPts;
           return;
         }
       }
       else /* Ray hit ourself */
       {
-        delete objList; delete objHitPts;
+        delete[] objList; delete[] objHitPts;
         return;
       }
       currObjPtr = objList[++n];
     }
-    delete objList; delete objHitPts;
+    delete[] objList; delete[] objHitPts;
   }
 
   /* No obstructions on the shadow ray. Calculate angle between normal vec and shadow

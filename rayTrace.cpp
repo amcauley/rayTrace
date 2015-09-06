@@ -17,9 +17,11 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (9/4):
+/* TOP LEVEL TODO (9/6):
 
-    - Shadow rays for Triangle class
+    - Shadow rays for TriObj
+       - When checkRayHit is called on TriObj, get and store normal vector at the same time, otherwise we'll have to re-call
+         AABB tree search for hit triangle during triObj traceRay routine, which would be unnecessary.
 
     - Put shadow ray computations (and maybe mirror/glass) into functions since they're very similar
       between different objects.
@@ -28,7 +30,7 @@
 
     - Gate shadow processing if shadow scaling is 0
 
-    - Test Triangle debug logging / check for mem leaks
+    - Test Triangle/TriObj debug logging / check for mem leaks
 
     - Look into compiler optimization flags
 
