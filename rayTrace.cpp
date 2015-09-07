@@ -62,6 +62,7 @@ int main()
     int nObj = 0, nSrc = 0;
     Object **obj = NULL, **src = NULL;
 
+    //sceneParser("Scenes/TestScene.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
     sceneParser("Scenes/TestScene.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
 
     /* ~~~ Start rendering. ~~~ */

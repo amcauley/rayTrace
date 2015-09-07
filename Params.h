@@ -3,7 +3,7 @@
 #define PARAMS_H
 
 /* Max recursion depth for rays. */
-#define MAX_RAY_DEPTH (4)
+#define MAX_RAY_DEPTH (5)
 
 /* Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
 ray samples and average them to get the final pixel value. >= 1. */
@@ -26,12 +26,12 @@ issues. */
    NOTE: debug log is stored globally, which may trigger false memory leak report. */
 //#define DEBUG_GEN_PIXEL_REPORT
 
-#define DEBUG_PIXEL_REPORT_X (36)  //Pixel width coord
+#define DEBUG_PIXEL_REPORT_X (100)  //Pixel width coord
 #define DEBUG_PIXEL_REPORT_Y (100)  //Pixel height coord
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
   /* Enable to mark the debug pixel white for easier locating. */
-  #define MARK_DEBUG_PIXEL
+  //#define MARK_DEBUG_PIXEL
 #endif
 
 /* Reverse order of pixels visited. Useful if debugging one of the later pixels under normal ordering.

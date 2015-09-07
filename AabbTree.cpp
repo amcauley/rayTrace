@@ -245,7 +245,6 @@ Object* Aabb3dNode::getClosestObj(Ray& ray, Vec3& closestHit, float* dist2out)
   /* Get the closest object looking only at the current node. */
   for (int k = 0; k < numObj; ++k)
   {
-    //tempRay = ray;
     Vec3* hitPtr = &hitPt;
     objs[k]->checkRayHit(ray, &hitPtr);
 

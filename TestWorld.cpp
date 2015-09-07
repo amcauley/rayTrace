@@ -73,6 +73,8 @@ void TestWorld::runTest(void)
     for (pw = img->width-1; pw >= 0; pw--)
 #endif
     {
+      //std::cout << "pw " << pw << " ph " << ph << std::endl;
+
       img->getPixLoc(pLoc, pw, ph);
       pixLoc = pLoc;
 
@@ -91,7 +93,7 @@ void TestWorld::runTest(void)
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
           dbgPixLog.isEn = ((pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y) &&
-            1);//(sx == 0) && (sy == 0));
+                            (sx == 0) && (sy == 0));
           if (dbgPixLog.isEn)
           {
             std::cout << "Dbg pix logging enabled\n";
