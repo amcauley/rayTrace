@@ -1,11 +1,14 @@
 /* Image: I locX locY locZ w h pixW pixH normX normY normZ */
-I -1.0 1.0 -2.0 200 200 .01 .01 0.0 0.0 1.0
+//I -1.0 1.0 -2.0 100 100 .02 .02 0.0 0.0 1.0
+I -0.1 0.1 2.0 800 800 .00025 .00025 0.0 0.0 1.0
 
 /* Eye: E locX locY locZ */
-E 0.0 0.0 -10.0
+//E 0.0 0.0 -50.0
+E 0.0 0.0 50.0
 
 /* Simple Source: SS locX locY locZ rad R G B indRef totScale shadScale mirScale glasScale ambScale */  
-SS 0.0 5.0 12.0 0.1 214 227 190 1.0 1.0 0.0 0.0 0.0 0.0
+//SS 0.0 0.0 -50.0 1.0 200 200 200 1.0 1.0 0.0 0.0 0.0 0.0
+SS -4.0 10.0 10.0 1.0 200 200 200 1.0 1.0 0.0 0.0 0.0 0.0
 
 /* Triangle Object: TO fileName x y z R G B indRef totScale shadScale mirScale glasScale ambScale */ 
-TO Scenes/TriObj1.txt 0.0 0.0 -1.0 150 250 50 1.2 1.00 0.5 0.0 0.0 0.1
+TO Objects/bunny.txt 0.02 -.11 0.0 200 200 200 1.2 1.00 0.2 0.0 0.0 0.1

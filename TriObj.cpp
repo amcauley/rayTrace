@@ -96,9 +96,10 @@ void TriObj::checkRayHit(Ray& ray, Vec3** hitPtr)
     while (currTriPtr != NULL)
     {
       /* Return the closest point to the ray. */
-      Vec3 dist2Tri2 = hitPtrs[n] - ray.loc3;
-      if (dist2Tri2.mag2() < minDist2Tri2)
+      float dist2Tri2 = (hitPtrs[n] - ray.loc3).mag2();
+      if (dist2Tri2 < minDist2Tri2)
       {
+        minDist2Tri2 = dist2Tri2;
         **hitPtr = hitPtrs[n];
         hitTriPtr = dynamic_cast<Triangle*>(currTriPtr);
       }

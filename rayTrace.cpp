@@ -17,11 +17,12 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (9/6):
+/* TOP LEVEL TODO (9/7):
+   
+    - Implement Mirror/Glass rays for TriObj class.
 
-    - Shadow rays for TriObj
-       - When checkRayHit is called on TriObj, get and store normal vector at the same time, otherwise we'll have to re-call
-         AABB tree search for hit triangle during triObj traceRay routine, which would be unnecessary.
+    - Try other Stanford Dragon OBJ files, maybe lower poly. There are a few dim spots in testing that seem to be due
+      to small sharp angles. Maybe a different poly will give different results.
 
     - Put shadow ray computations (and maybe mirror/glass) into functions since they're very similar
       between different objects.
