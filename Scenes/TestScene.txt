@@ -1,14 +1,22 @@
 /* Image: I locX locY locZ w h pixW pixH normX normY normZ */
 //I -1.0 1.0 -2.0 100 100 .02 .02 0.0 0.0 1.0
-I -0.1 0.1 2.0 800 800 .00025 .00025 0.0 0.0 1.0
+I -0.1 0.1 2.0 400 400 .0005 .0005 0.0 0.0 1.0
 
 /* Eye: E locX locY locZ */
 //E 0.0 0.0 -50.0
-E 0.0 0.0 50.0
+E 0.0 0.0 10.0
 
 /* Simple Source: SS locX locY locZ rad R G B indRef totScale shadScale mirScale glasScale ambScale */  
 //SS 0.0 0.0 -50.0 1.0 200 200 200 1.0 1.0 0.0 0.0 0.0 0.0
-SS -4.0 10.0 10.0 1.0 200 200 200 1.0 1.0 0.0 0.0 0.0 0.0
+SS 0.0 0.0 3.5 1.0 200 200 200 1.0 1.0 0.0 0.0 0.0 0.0
 
 /* Triangle Object: TO fileName x y z R G B indRef totScale shadScale mirScale glasScale ambScale */ 
-TO Objects/bunny.txt 0.02 -.11 0.0 200 200 200 1.2 1.00 0.2 0.0 0.0 0.1
+TO Objects/bunny.txt 0.02 -.11 0.0 200 200 200 1.4 1.50 0.0 0.3 0.5 0.0
+
+/* Plane: PL normX normY normZ offset R G B indRef totScale shadScale mirScale glasScale ambScale */  
+PL 0.0 	1.0  0.0  0.4   200  50  50 1.8  1.0  0.1 0.0 0.0 0.1	//Bottom
+PL 1.0 	0.0  0.0  0.4   100 254 100 1.8  1.0  0.1 0.0 0.0 0.1 	//Left
+PL 0.0 	-1.0 0.0  0.4   150 150 250 1.8  1.0  0.1 0.0 0.0 0.1 	//Top
+PL -1.0 0.0  0.0  0.4   250 250 20  1.8  1.0  0.1 0.0 0.0 0.1	//Right
+PL 0.0 	0.0  -1.0 100.0 100 60 30   1.8  1.0  0.1 0.0 0.0 0.1	//Back 
+PL 0.0 	0.0  1.0  100.0 30  60 100  1.8  1.0  0.1 0.0 0.0 0.1	//Front

@@ -134,7 +134,7 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
 
     /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
 
-    /* Proceed with glassy calculations if no total internal reflection. Not that if this is an
+    /* Proceed with glassy calculations if no total internal reflection. Note that if this is an
     internal ray, the "glassy" ray is actually in the non-sphere-glass medium, so the name can
     be a little confusing in some situations. */
     if (glassVec != NULL)
@@ -215,7 +215,15 @@ void Sphere::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     direction is from center of sphere to the impact ray intersection pt. Angle is in radians,
     from 0 to Pi, but since we don't expect angles greater than Pi/2 (otherwise would have
     occluded ourself), scale by ((Pi/2)-angle). */
-    float angle = shadowDir.getAngle(norm);
+
+    /* We want these to be hittable from either side, so flip the normal vector locally if needed. */
+    Vec3 tempNorm = norm;
+    if (tempNorm.dot(shadowDir) < 0.0f)
+    {
+      tempNorm = tempNorm*(-1.0f);
+    }
+
+    float angle = shadowDir.getAngle(tempNorm);
 
     if (angle < 0.0f)
     {

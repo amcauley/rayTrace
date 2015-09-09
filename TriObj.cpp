@@ -67,6 +67,29 @@ TriObj::TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s) :
 
   triTree = Aabb3dTree(tris, nTri, TRI_TREE_DEPTH);
 
+  /* Force all triangles to have outward-facing normals. We do this by checking how many faces each
+     normal passes through (the face itself is excluded from this count). If it's even (0, 2, 4, ...),
+     then it's outward facing (even numbers arise from passing into and then out of the object). If the number
+     is odd, then we're exiting the object (and posibly into/out multiple times). */
+
+  for (int k = 0; k < nTri; ++k)
+  {
+    Triangle* triPtr = dynamic_cast<Triangle*>(tris[k]);
+
+    Object** hitObjPtrArrayPtr = NULL;
+    Vec3* hitPtrs = NULL;
+
+    int objIdx = 0;
+    triTree.root->getHitObjects(Ray(triPtr->loc3, triPtr->norm, 0, 0), &hitObjPtrArrayPtr, &hitPtrs, &objIdx, nTri);
+
+    /* If inward facing, flip direction. */
+    if (objIdx % 2 == 0)
+    {
+      triPtr->norm = triPtr->norm * (-1.0f);
+      triPtr->d *= -1.0f;
+    }
+  }
+
   hitTriPtr = NULL;
 }
 
@@ -125,6 +148,9 @@ void TriObj::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   {
     assert(0); //We should have set hitTriPtr during a previous call to checkRayHit.
   }
+
+  /* Latch the norm before we recurse into any other rays (which could call checkHitRay and
+     overwrite hitTriPtr. */
   Vec3 triNorm = hitTriPtr->norm;
   //std::cout << "triNorm " << triNorm.x << " " << triNorm.y << " " << triNorm.z << std::endl;
 
@@ -135,6 +161,79 @@ void TriObj::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   }
 
   Rgb tempRgb;
+
+  if ((sParams.glassScale > 0.0f) || (sParams.mirrorScale > 0.0f))
+  {
+    /* Determine if this ray is from inside the sphere (internal ray) or external. Internal rays
+    originate from a refracted ray traveling inside the sphere. */
+    bool isInternal = (ray.vec3.dot(triNorm) > 0.0f);
+    /*~~~~~~~~~~ Reflection (Mirror) Ray Proc ~~~~~~~~~~*/
+    Vec3 mirrorVec, *glassVec = NULL;
+    ray.vec3.normalize();
+
+    float R;
+    if (isInternal)
+    {
+      physRefraction(ray.vec3, triNorm*(-1.0f), ior, callingObj.ior, mirrorVec, &glassVec, R);
+    }
+    else
+    {
+      physRefraction(ray.vec3, triNorm, callingObj.ior, ior, mirrorVec, &glassVec, R);
+    }
+
+    if (sParams.mirrorScale > 0.0f)
+    {
+      Ray mirrorRay = Ray(ray.loc3, mirrorVec, ray.depth + 1, 0.0f);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+      dbgPixLog.nextLvl(RAY_TYPE_MIRROR);
+#endif
+
+      callingObj.traceRay(mirrorRay, tempRgb, callingObj, srcList, 1);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+      dbgPixLog.storeInfo(this, tempRgb);
+      dbgPixLog.restoreLvl();
+#endif
+    }
+
+    if (glassVec == NULL)
+    {
+      /* TIR: no transmitted/glass wave. */
+      R = 1.0f;
+    }
+
+    outRgb = outRgb + tempRgb*R*sParams.mirrorScale;
+
+    /*~~~~~~~~~~ Refraction Ray Proc ~~~~~~~~~~*/
+
+    /* Proceed with glassy calculations if no total internal reflection. Note that if this is an
+    internal ray, the "glassy" ray is actually in the non-sphere-glass medium, so the name can
+    be a little confusing in some situations. */
+    if (glassVec != NULL)
+    {
+      if (sParams.glassScale > 0.0f)
+      {
+#ifdef DEBUG_GEN_PIXEL_REPORT
+        dbgPixLog.nextLvl(RAY_TYPE_GLASS);
+#endif
+
+        Ray glassRay = Ray(ray.loc3, *glassVec, ray.depth + 1, 0.0f);
+        callingObj.traceRay(glassRay, tempRgb, callingObj, srcList, 1);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+        dbgPixLog.storeInfo(this, tempRgb);
+        dbgPixLog.restoreLvl();
+#endif
+
+        float distanceScaling = powf(2.0f, -sqrt(ray.dist2)*0.25f);
+
+        outRgb = outRgb +
+          (tempRgb*(1.0f - R)*distanceScaling + rgb*(1.0f - distanceScaling)*0.01f)*sParams.glassScale;
+      }
+      delete glassVec;
+    }
+  }
 
   /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
   if (sParams.shadowScale > 0.0f)
@@ -192,9 +291,9 @@ void TriObj::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
 
     /* We want these to be hittable from either face, so flip the normal vector locally if needed. */
     Vec3 tempNorm = triNorm;
-    if (triNorm.dot(shadowDir) < 0.0f)
+    if (tempNorm.dot(shadowDir) < 0.0f)
     {
-      tempNorm = triNorm*(-1.0f);
+      tempNorm = tempNorm*(-1.0f);
     }
 
     float angle = shadowDir.getAngle(tempNorm);

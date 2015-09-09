@@ -17,9 +17,9 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (9/7):
+/* TOP LEVEL TODO (9/8):
    
-    - Implement Mirror/Glass rays for TriObj class.
+    - Modify AabbTree to use std::vector so it'll auto-resize (instead of allocating max memory - too large for TriObj use).
 
     - Try other Stanford Dragon OBJ files, maybe lower poly. There are a few dim spots in testing that seem to be due
       to small sharp angles. Maybe a different poly will give different results.
@@ -28,6 +28,8 @@
       between different objects.
 
     - Optimize Triangle routines
+
+    - GetHitObjects prob doesn't need to append NULL ptr now that it returns number of hits (objIdx) 
 
     - Gate shadow processing if shadow scaling is 0
 
@@ -63,8 +65,8 @@ int main()
     int nObj = 0, nSrc = 0;
     Object **obj = NULL, **src = NULL;
 
-    //sceneParser("Scenes/TestScene.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
     sceneParser("Scenes/TestScene.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
+    //sceneParser("Scenes/SphereArray.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
 
     /* ~~~ Start rendering. ~~~ */
     std::cout << "Creating test world\n";
