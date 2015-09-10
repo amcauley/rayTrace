@@ -39,7 +39,7 @@ void Object::checkRayHit(Ray& ray, Vec3** hitPtr)
   assert(0); //Shouldn't be using default version.
 }
 
-void Object::CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
+void Object::CheckRayHitExt(Ray& ray, std::vector<Object*> &hitObjs, std::vector<Vec3> &hitPts)
 {
   assert(0); //Shouldn't be using default version.
 }

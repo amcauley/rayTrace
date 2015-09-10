@@ -92,8 +92,7 @@ void TestWorld::runTest(void)
           Vec3 rayVec = (pixLoc - eye);
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
-          dbgPixLog.isEn = ((pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y) &&
-                            (sx == 0) && (sy == 0));
+          dbgPixLog.isEn = ( (pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y) );
           if (dbgPixLog.isEn)
           {
             std::cout << "Dbg pix logging enabled\n";
@@ -109,15 +108,21 @@ void TestWorld::runTest(void)
       /* Average over all supersample anti-alias values. */
       activePixel->rgb = (activePixel->rgb*PARAM_TOTAL_SCALE)*(1.0f/(PARAM_LIN_SUPERSAMPLE_FACTOR*PARAM_LIN_SUPERSAMPLE_FACTOR));
 
-#ifdef DEBUG_GEN_PIXEL_REPORT
-      dbgPixLog.storeInfo(this, activePixel->rgb);
-      dbgPixLog.export(this, "Output/dbgPixLog.txt");
-    #ifdef MARK_DEBUG_PIXEL
+
+#ifdef MARK_DEBUG_PIXEL
+#if DEBUG_GEN_PIXEL_REPORT
       if (dbgPixLog.isEn)
+#else
+      if ( (pw == DEBUG_PIXEL_REPORT_X) && (ph == DEBUG_PIXEL_REPORT_Y) )
+#endif
       {
         activePixel->rgb = Rgb(1.0f, 1.0f, 1.0f);
       }
-    #endif
+#endif
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+      dbgPixLog.storeInfo(this, activePixel->rgb);
+      dbgPixLog.export(this, "Output/dbgPixLog.txt");
 #endif
     }
   }
@@ -127,8 +132,7 @@ void TestWorld::runTest(void)
 }
 
 /* Search object tree for all hit objects. */
-void TestWorld::CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr)
+void TestWorld::CheckRayHitExt(Ray& ray, std::vector<Object*> &hitObjs, std::vector<Vec3> &hitPts)
 {
-  int objIdx = 0;
-  objTree.root->getHitObjects(ray, hitObjPtrArrayPtr, hitPtr, &objIdx, nObj);
+  objTree.root->getHitObjects(ray, hitObjs, hitPts);
 }

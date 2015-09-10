@@ -8,6 +8,7 @@ class AABB;
 /* Included files. */
 #include <iostream>
 
+#include <vector>
 #include "Pixel.h"
 #include "Ray.h"
 #include <math.h> //should go after Params.h to get the benefit of _USE_MATH_DEFINES
@@ -34,7 +35,7 @@ class Object {
     Object& operator= (Object& otherObj);
 
     virtual void checkRayHit(Ray& ray, Vec3** hitPtr);
-    virtual void CheckRayHitExt(Ray& ray, Object*** hitObjPtrArrayPtr, Vec3** hitPtr);
+    virtual void CheckRayHitExt(Ray& ray, std::vector<Object*> &hitObjs, std::vector<Vec3> &hitPts);
     virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 };
 

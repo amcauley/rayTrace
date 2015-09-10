@@ -17,21 +17,10 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (9/8):
-   
-    - Modify AabbTree to use std::vector so it'll auto-resize (instead of allocating max memory - too large for TriObj use).
-
-    - Try other Stanford Dragon OBJ files, maybe lower poly. There are a few dim spots in testing that seem to be due
-      to small sharp angles. Maybe a different poly will give different results.
-
-    - Put shadow ray computations (and maybe mirror/glass) into functions since they're very similar
-      between different objects.
-
-    - Optimize Triangle routines
-
-    - GetHitObjects prob doesn't need to append NULL ptr now that it returns number of hits (objIdx) 
-
-    - Gate shadow processing if shadow scaling is 0
+/* TOP LEVEL TODO (9/10):
+    
+    - Move scene input file from rayTrace.cpp into test config file that's parsed, so we don't have to recompile
+      for scene changes. Also move Params.h values into same config file. 
 
     - Test Triangle/TriObj debug logging / check for mem leaks
 
@@ -42,14 +31,6 @@
     - Multiple sources
 
     - Pictures - let planes display bitmap images.
-
-    - Implement triangle class, then triObj (a 3d object composed of a collection of triangles)
-
-    - Create OBJ data reader that parses OBJ (ones that only use 3-point polygons) files into a triObj.
-        OBJ format info: http://paulbourke.net/dataformats/obj/
-        OBJ data files:  http://people.sc.fsu.edu/~jburkardt/data/obj/obj.html
-
-    - Remove obj list from test world / debug class. It's been made obsolete by the object kd tree.
 */
 
 int main()
