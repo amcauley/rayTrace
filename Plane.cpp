@@ -121,6 +121,9 @@ void Plane::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList
     Rgb tempRgb;
     float scale;
     scale = commonShadowTrace(srcList, ray, callingObj, loc3, tempRgb);
-    outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
+    if (scale > 0.0f)
+    {
+      outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
+    }
   }
 }

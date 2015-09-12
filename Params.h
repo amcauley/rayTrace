@@ -2,17 +2,31 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
+#include <string>
+
+#define CONFIG_FILE_PATH "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/config.txt"
+
+#define SCENE_PATH_DEFAULT "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Scenes/SphereArray.txt"
+extern std::string SCENE_PATH;
+
+#define OUTPUT_IMG_DEFAULT "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Output/rayTraceOutput.bmp"
+extern std::string OUTPUT_IMG;
+
 /* Max recursion depth for rays. */
-#define MAX_RAY_DEPTH (4)
+#define MAX_RAY_DEPTH_DEFAULT (5)
+extern unsigned int MAX_RAY_DEPTH;
 
 /* Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
 ray samples and average them to get the final pixel value. >= 1. */
-#define PARAM_LIN_SUPERSAMPLE_FACTOR (1)
+#define PARAM_LIN_SUPERSAMPLE_FACTOR_DEFAULT (1)
+extern unsigned int PARAM_LIN_SUPERSAMPLE_FACTOR;
 
 /* Depth of top level object kd-tree. Should be >= 1.*/
-#define TOP_LEVEL_OBJECT_TREE_DEPTH (3)
+#define TOP_LEVEL_OBJECT_TREE_DEPTH_DEFAULT (3)
+extern unsigned int TOP_LEVEL_OBJECT_TREE_DEPTH;
 /* Tree depth for TriObj objects. */
-#define TRI_TREE_DEPTH (8)
+#define TRI_TREE_DEPTH_DEFAULT (8)
+extern unsigned int TRI_TREE_DEPTH ;
 
 /* Print out processing progress info. */
 #define STATUS_PRINTS_ENABLED
@@ -69,6 +83,8 @@ issues. */
 /* Inlcude math defines such as */
 #define _USE_MATH_DEFINES
 
+/* Function Prototypes. */
+void getParams(std::string fileName);
 
 /* ~~~~~~~~~~ Param Related Structs/Classes ~~~~~~~~~~ */
 class ScaleParams

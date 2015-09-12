@@ -83,10 +83,10 @@ void TestWorld::runTest(void)
 
       /* Anti-aliasing supersampling loops over x and y supersample coords. The supersampling happens near the original
          pixel location - biased to the left/bottom a little, but not a big deal. */
-      for (int sy = -(PARAM_LIN_SUPERSAMPLE_FACTOR - 1) / 2; sy < (PARAM_LIN_SUPERSAMPLE_FACTOR + 1) / 2; ++sy)
+      for (int sy = -((int)PARAM_LIN_SUPERSAMPLE_FACTOR - 1) / 2; sy < ((int)PARAM_LIN_SUPERSAMPLE_FACTOR + 1) / 2; ++sy)
       {
         pixLoc.y = pLoc.y + (sy*(img->pHeight)) / PARAM_LIN_SUPERSAMPLE_FACTOR;
-        for (int sx = -(PARAM_LIN_SUPERSAMPLE_FACTOR - 1) / 2; sx < (PARAM_LIN_SUPERSAMPLE_FACTOR + 1) / 2; ++sx)
+        for (int sx = -((int)PARAM_LIN_SUPERSAMPLE_FACTOR - 1) / 2; sx < ((int)PARAM_LIN_SUPERSAMPLE_FACTOR + 1) / 2; ++sx)
         {
           pixLoc.x = pLoc.x + (sx*(img->pWidth)) / PARAM_LIN_SUPERSAMPLE_FACTOR;
           Vec3 rayVec = (pixLoc - eye);

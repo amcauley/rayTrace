@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Bitmap.h"
 #include <algorithm>
+#include <assert.h>
 
 void writeBytes(std::ofstream& fs, uint32_t dataBytes, int numBytes)
 {
@@ -14,11 +15,21 @@ void writeBytes(std::ofstream& fs, uint32_t dataBytes, int numBytes)
   }
 }
 
-void writePixelsToBmp24(const char* fileName, Pixel* pixArray, int w, int h)
+void writePixelsToBmp24(std::string fileName, Pixel* pixArray, int w, int h)
 {
   /* Take input array of pixels and format them into a bitmap. Write to file. */
   std::ofstream fs;
   fs.open(fileName, std::ios::out | std::ios::binary);
+
+  if (fs.is_open())
+  {
+    std::cout << "Opened output file for writing: " << fileName << std::endl;
+  }
+  else
+  {
+    std::cout << "Failed to open output file: " << fileName << std::endl;
+    assert(0);
+  }
 
   BMP_HEADER head;
   BMP_INFO_HEADER info;

@@ -93,7 +93,7 @@ Pixel* Image::getPix(int wIdx, int hIdx)
   return &pixels[hIdx*width + wIdx];
 }
 
-void Image::exportBitmap(const char* fileName)
+void Image::exportBitmap(std::string fileName)
 {
   writePixelsToBmp24(fileName, pixels, width, height);
 }

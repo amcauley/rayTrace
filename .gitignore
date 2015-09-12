@@ -52,3 +52,4 @@ rayTraceBackup0719.zip
 *.filters
 Debug/vc140.idb
 *.bmp
+*.pdb

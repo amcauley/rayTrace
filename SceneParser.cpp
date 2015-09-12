@@ -8,11 +8,23 @@
 #include "Triangle.h"
 #include "TriObj.h"
 
-void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs, int* nSrc, Image** img, Vec3** eye)
+void sceneParser(std::string fileName, Object*** objs, int* nObj, Object*** srcs, int* nSrc, Image** img, Vec3** eye)
 {
   std::ifstream fs(fileName);
-
   std::string curLine;
+
+  if (std::getline(fs, curLine))
+  {
+    std::cout << "Parsing scene: " << fileName << std::endl;
+  }
+  else
+  {
+    std::cout << "Error reading scene: " << fileName << std::endl;
+    assert(0);
+  }
+
+  fs.clear();
+  fs.seekg(0, std::ios::beg);
 
   /* Start by counting the number of objects, sources, etc. */
   while (std::getline(fs, curLine))
@@ -113,11 +125,15 @@ void sceneParser(const char* fileName, Object*** objs, int* nObj, Object*** srcs
       (*objs)[curObj++] = new Triangle(Vec3(x1, y1, z1), Vec3(x2, y2, z2), Vec3(x3, y3, z3), Rgb(R, G, B)*(1.0f / 255.0f), ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
       std::cout << "Triangle created \n";
     }
-    else if (curWord == "TO") /* Triangle Object: TO fileName x y z R G B indRef totScale shadScale mirScale glasScale ambScale */
+    else if (curWord == "TO") /* Triangle Object: TO x y z R G B indRef totScale shadScale mirScale glasScale ambScale fileName*/
+    /* fileName is at the end so we don't have to try to parse whitespace in filenames - just read the rest of the line, whitespace and all. */
     {
       std::string triObjPath;
       float x, y, z, R, G, B, indRef, totScale, shadScale, mirScale, glasScale, ambScale;
-      lineStream >> triObjPath >> x >> y >> z >> R >> G >> B >> indRef >> totScale >> shadScale >> mirScale >> glasScale >> ambScale;
+      lineStream >> x >> y >> z >> R >> G >> B >> indRef >> totScale >> shadScale >> mirScale >> glasScale >> ambScale;
+      while (lineStream.peek() == ' ') lineStream.get(); //eat leading whitespace
+      std::getline(lineStream, triObjPath);
+      std::cout << "Creating TriObj: " << triObjPath << std::endl;
       (*objs)[curObj++] = new TriObj(triObjPath, Vec3(x, y, z), Rgb(R, G, B)*(1.0f / 255.0f), indRef, ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
       std::cout << "TriObj created \n";
     }

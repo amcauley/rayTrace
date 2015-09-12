@@ -1,0 +1,20 @@
+//Scene to be rendered
+//SCENE_PATH Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Scenes/SphereArray.txt
+SCENE_PATH Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Scenes/BunnyScene.txt
+//SCENE_PATH Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Scenes/DragonScene.txt
+
+//Output image destination
+OUTPUT_IMG Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Output/rayTraceOut.bmp
+
+//Max recursion level
+MAX_RAY_DEPTH 2
+
+//Depth of top level object kd-tree. Should be >= 1.
+TOP_LEVEL_OBJECT_TREE_DEPTH 2
+
+//Tree depth for TriObj objects
+TRI_TREE_DEPTH 7
+
+//Linear supersampling factor. Ex. 3 means that for each pixel, we'll take 3x3 = 9
+//ray samples and average them to get the final pixel value. >= 1.
+PARAM_LIN_SUPERSAMPLE_FACTOR 1

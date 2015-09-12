@@ -12,7 +12,7 @@ public:
   Vec3 vec3;
   /* Count the depth of this ray, e.x original ray is depth 0, reflected ray is depth 1, reflected of
      that one is depth 2, etc. */
-  int depth;
+  unsigned int depth;
   /* Distance (squared) traveled from last location to current one. */
   float dist2;
 

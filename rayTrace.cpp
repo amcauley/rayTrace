@@ -41,13 +41,15 @@ int main()
 
   {
 
-    Image* img;
-    Vec3* eye;
+    Image* img = NULL;
+    Vec3* eye = NULL;
     int nObj = 0, nSrc = 0;
     Object **obj = NULL, **src = NULL;
 
-    sceneParser("Scenes/TestScene.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
-    //sceneParser("Scenes/SphereArray.txt", &obj, &nObj, &src, &nSrc, &img, &eye);
+    std::cout << "Calling cfg parser." << std::endl;
+    getParams(CONFIG_FILE_PATH);
+
+    sceneParser(SCENE_PATH, &obj, &nObj, &src, &nSrc, &img, &eye);
 
     /* ~~~ Start rendering. ~~~ */
     std::cout << "Creating test world\n";
@@ -88,7 +90,7 @@ int main()
     delete[] src;
 
     img->autoScale();
-    img->exportBitmap("Output/rayTraceOutput.bmp");
+    img->exportBitmap(OUTPUT_IMG);
 
     delete img;
     delete eye;

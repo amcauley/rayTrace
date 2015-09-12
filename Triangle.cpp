@@ -207,6 +207,9 @@ void Triangle::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcL
     Rgb tempRgb;
     float scale;
     scale = commonShadowTrace(srcList, ray, callingObj, norm, tempRgb);
-    outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
+    if (scale > 0.0f)
+    {
+      outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
+    }
   }
 }

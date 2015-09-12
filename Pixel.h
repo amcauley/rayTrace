@@ -35,7 +35,7 @@ class Image {
     Image(Vec3&, Vec3&, int, int, float, float);
     void getPixLoc(Vec3& pLoc, int wIdx, int hIdx);
     Pixel* getPix(int wIdx, int hIdx);
-    void exportBitmap(const char* fileName);
+    void exportBitmap(std::string fileName);
     void autoScale(void);
 };
 

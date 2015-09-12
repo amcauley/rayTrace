@@ -34,6 +34,6 @@ typedef struct {  //pixel struct
   uint8_t red;    //1 byte
 } BMP_PIXEL;      //TOTAL: 3 bytes
 
-extern void writePixelsToBmp24(const char* fileName, Pixel* pixArray, int w, int h);
+extern void writePixelsToBmp24(std::string fileName, Pixel* pixArray, int w, int h);
 
 #endif //BITMAP_H

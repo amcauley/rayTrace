@@ -14,6 +14,19 @@ TriObj::TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s) :
   std::ifstream fs(fileName);
   std::string curLine;
 
+  if (std::getline(fs, curLine))
+  {
+    std::cout << "Parsing TriObj: " << fileName << std::endl;
+  }
+  else
+  {
+    std::cout << "Error reading TriObj: " << fileName << std::endl;
+    assert(0);
+  }
+
+  fs.clear();
+  fs.seekg(0, std::ios::beg);
+
   int lineNum = 0;
 
   /* Start by counting the number of objects, sources, etc. */
@@ -176,6 +189,9 @@ void TriObj::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
     Rgb tempRgb;
     float scale;
     scale = commonShadowTrace(srcList, ray, callingObj, triNorm, tempRgb);
-    outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
+    if (scale > 0.0f)
+    {
+      outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
+    }
   }
 }
