@@ -51,7 +51,6 @@ Debug/vc140.pdb
 rayTraceBackup0719.zip
 *.filters
 Debug/vc140.idb
-*.bmp
 *.pdb
 Output/rayTraceOutput.bmp
 *.bak
