@@ -6,7 +6,7 @@
 
 #define CONFIG_FILE_PATH "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/config.txt"
 
-#define SCENE_PATH_DEFAULT "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Scenes/SphereArray.txt"
+#define SCENE_PATH_DEFAULT "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Scenes/TriObj1.txt"
 extern std::string SCENE_PATH;
 
 #define OUTPUT_IMG_DEFAULT "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Output/rayTraceOutput.bmp"

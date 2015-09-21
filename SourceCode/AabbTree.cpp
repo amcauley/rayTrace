@@ -14,7 +14,7 @@ Aabb3dNode::~Aabb3dNode()
   if (objs != NULL) delete[] objs;
 }
 
-void Aabb3dNode::buildNode(Object** inputObjs, int nObj, int lvl, int maxLvl)
+void Aabb3dNode::buildNode(Object** inputObjs, int nObj, int lvl, int maxLvl, int& nNodes)
 {
   axis = (AxisEnum)(lvl % (int)NUM_AXIS);
   /* If not at leaf, divide objects into left/right groups and create next level down. If we're down to a single
@@ -188,12 +188,12 @@ void Aabb3dNode::buildNode(Object** inputObjs, int nObj, int lvl, int maxLvl)
     if (nLeft > 0)
     {
       left = new Aabb3dNode;
-      left->buildNode(leftObjs, nLeft, lvl + 1, maxLvl);
+      left->buildNode(leftObjs, nLeft, lvl + 1, maxLvl, ++nNodes);
     }
     if (nRight > 0)
     {
       right = new Aabb3dNode;
-      right->buildNode(rightObjs, nRight, lvl + 1, maxLvl);
+      right->buildNode(rightObjs, nRight, lvl + 1, maxLvl, ++nNodes);
     }
 
     /* Done with remaining local dynamic memory for this node. */
@@ -219,7 +219,8 @@ Aabb3dTree::Aabb3dTree(Object** inputObjs, int nObj, int nLvls) :
 {
   std::cout << "Building top lvl kd-tree\n";
   root = new Aabb3dNode;
-  root->buildNode(inputObjs, nObj, 0, nLvls);
+  nNodes = 1; //number of nodes in the tree. Initialize to 1 (for the root).
+  root->buildNode(inputObjs, nObj, 0, nLvls, nNodes);
 }
 
 

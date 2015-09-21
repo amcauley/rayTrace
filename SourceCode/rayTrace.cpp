@@ -17,10 +17,9 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (9/10):
-    
-    - Move scene input file from rayTrace.cpp into test config file that's parsed, so we don't have to recompile
-      for scene changes. Also move Params.h values into same config file. 
+/* TOP LEVEL TODO (9/20):
+     
+    - Have root project directory as a config file parameter to help avoid hardcoding file paths
 
     - Test Triangle/TriObj debug logging / check for mem leaks
 

@@ -8,7 +8,7 @@ class Aabb3dNode {
 public:
   Aabb3dNode();
   ~Aabb3dNode();
-  void buildNode(Object** inputObjs, int nObj, int lvl, int maxLvl);
+  void buildNode(Object** inputObjs, int nObj, int lvl, int maxLvl, int& nNodes);
   /* Pointers to the "left" and "right" children of this node. */
   Aabb3dNode* left;
   Aabb3dNode* right;
@@ -32,6 +32,7 @@ public:
 class Aabb3dTree {
 public:
   int nLvls;
+  int nNodes;
   Aabb3dNode* root;
   Aabb3dTree();
   Aabb3dTree(Object** inputObjs, int nObj, int nLvls);
