@@ -17,8 +17,10 @@
 #include "Plane.h"
 #include "SceneParser.h"
 
-/* TOP LEVEL TODO (9/20):
+/* TOP LEVEL TODO (9/26):
      
+    - Caching doesn't take into account changing locations / tree depths / etc. between runs.
+
     - Have root project directory as a config file parameter to help avoid hardcoding file paths
 
     - Test Triangle/TriObj debug logging / check for mem leaks

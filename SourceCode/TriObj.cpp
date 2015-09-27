@@ -8,13 +8,46 @@
 #include <queue>
 #include "Util.h"
 
+/* Helper function to get the name of the triObj from the input filename. If the input filename is something like
+   x/y/z/<name>.txt, we'll return <name>. */
+std::string getTriObjName(std::string fileName)
+{
+  std::string::iterator it;
+  int charCnt = 0;
+  /* Count backwards from end of string until we find a slash, then go forward until we hit a period. */
+  for (it = fileName.end()-1; it != fileName.begin(); --it)
+  {
+    if ((*it == '\\') || (*it == '/'))
+    {
+      /* We found the slash, increment the iterator to point to the next character (start of triObjName). */
+      ++it;
+      break;
+    }
+
+  }
+
+  std::string triObjName;
+
+  while (*it != '.')
+  {
+    triObjName += *it;
+    ++it;
+  }
+
+  return triObjName;
+}
+
 TriObj::TriObj() {};
 
 TriObj::TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s) :
   Object(a, c, i, s)
 {
 
-  std::string cachedFileName = "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Objects/Cached/testObj.tcf";
+  std::string cachedFileName;
+  //cachedFileName = "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Objects/Cached/test.tcf";
+  cachedFileName = "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Objects/Cached/" +
+                    getTriObjName(fileName) + ".tcf";
+
   isFromCache = fileExists(cachedFileName);
   if (isFromCache)
   {
@@ -237,9 +270,11 @@ void TriObj::export(std::string fileName)
   std::fstream fp(fileName, std::ios::out | std::ios::binary);
 
   fp
+    //<< "\nloc3: "
     << loc3.x << " "
     << loc3.y << " "
     << loc3.z << " "
+    //<< "\nbbox: "
     << bbox->xl << " "
     << bbox->xh << " "
     << bbox->yl << " "
@@ -255,8 +290,11 @@ void TriObj::export(std::string fileName)
     //<< sParams.mirrorScale << " "
     //<< sParams.shadowScale << " "
     //<< sParams.totalScale << " "
+    //<< "\nnTri: "
     << nTri << " "
+    //<< "\nnNodes: "
     << triTree.nNodes << " "
+    //<< "\nnLvls: "
     << triTree.nLvls << " ";
 
   /* Breadth first traversal of nodes to get node info then triangle info in that node:
@@ -268,10 +306,13 @@ void TriObj::export(std::string fileName)
 
   while (!nodeQ.empty())
   {
+    //fp << "\n\nnode: ";
     Aabb3dNode* currNode = nodeQ.front();
     nodeQ.pop();
 
+    //fp << "\nnumObj: ";
     fp << currNode->numObj << " ";
+    //fp << "\nleft/right nodes: ";
 
     /* Left node */
     if (currNode->left != NULL)
@@ -290,7 +331,7 @@ void TriObj::export(std::string fileName)
     if (currNode->right != NULL)
     {
       fp << nodeIdx << " ";
-      nodeQ.push(currNode->left);
+      nodeQ.push(currNode->right);
       ++nodeIdx;
     }
     else
@@ -300,13 +341,16 @@ void TriObj::export(std::string fileName)
     }
 
     fp
+      //<< "\naxis: "
       << (int)currNode->axis << " "
+      //<< "\nleftBox: "
       << currNode->leftBox.xl << " "
       << currNode->leftBox.xh << " "
       << currNode->leftBox.yl << " "
       << currNode->leftBox.yh << " "
       << currNode->leftBox.zl << " "
       << currNode->leftBox.zh << " "
+      //<< "\nrightBox: "
       << currNode->rightBox.xl << " "
       << currNode->rightBox.xh << " "
       << currNode->rightBox.yl << " "
@@ -320,14 +364,19 @@ void TriObj::export(std::string fileName)
       Triangle* currTri = dynamic_cast<Triangle*>(currNode->objs[k]);
 
       fp
+        //<< "\nTri info\nloc3: "
         << currTri->loc3.x << " "
         << currTri->loc3.y << " "
         << currTri->loc3.z << " "
+        //<< "\nnorm: "
         << currTri->norm.x << " "
         << currTri->norm.y << " "
         << currTri->norm.z << " "
+        //<< "\nd: "
         << currTri->d << " "
+        //<< "\nmajAxis: "
         << (int)currTri->normMajorAxis << " "
+        //<< "\npts: "
         << currTri->pts[0].x << " "
         << currTri->pts[0].y << " "
         << currTri->pts[0].z << " "
@@ -337,6 +386,7 @@ void TriObj::export(std::string fileName)
         << currTri->pts[2].x << " "
         << currTri->pts[2].y << " "
         << currTri->pts[2].z << " "
+        //<< "\nbbox: "
         << currTri->bbox->xl << " "
         << currTri->bbox->xh << " "
         << currTri->bbox->yl << " "
@@ -353,7 +403,7 @@ void TriObj::export(std::string fileName)
 
 void TriObj::import(std::string fileName)
 {
-  std::ifstream fs(fileName);
+  std::fstream fs(fileName, std::ios::in | std::ios::binary);
 
   fs >> loc3.x >> loc3.y >> loc3.z;
 
