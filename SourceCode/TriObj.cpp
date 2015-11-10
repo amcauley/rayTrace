@@ -48,7 +48,12 @@ TriObj::TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s) :
   cachedFileName = "Z:/Documents/Visual Studio 2015/Projects/Project1/Project1/Objects/Cached/" +
                     getTriObjName(fileName) + ".tcf";
 
+#ifdef USE_CACHE_BETA                   
   isFromCache = fileExists(cachedFileName);
+#else
+  isFromCache = false;
+#endif
+    
   if (isFromCache)
   {
     /* Use the cached version of the file. */
@@ -149,8 +154,10 @@ TriObj::TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s) :
       }
     }
 
+#ifndef USE_CACHE_BETA     
     /* Cache the file for future usage. */
     export(cachedFileName);
+#endif    
   } //End non-cached case 
 
   hitTriPtr = NULL;

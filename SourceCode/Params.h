@@ -53,6 +53,9 @@ issues. */
 /* Disable image autoscaling. */
 //#define SKIP_IMAGE_AUTOSCALE
 
+/* Cache TriObj files - still under development (should support translations, rotations, compare timestamp of actual TriObj to cached version) */
+//#define USE_CACHE_BETA
+
 /* Enable to create memory leak report at end of program.
    NOTE: if DEBUG_GEN_PIXEL_REPORT is defined, it may incorrectly show up as a memory leak because it's stored as a global. */
 //#define DEBUG_MEM_LEAK_REPORT
