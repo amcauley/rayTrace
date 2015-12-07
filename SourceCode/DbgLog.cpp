@@ -109,7 +109,7 @@ void DbgPixLog::writeLogLayer(std::ofstream& fs, int depth, int& idx)
   }
 }
 
-void DbgPixLog::export(const TestWorld* environment, const std::string fileName)
+void DbgPixLog::exportDbg(const TestWorld* environment, const std::string fileName)
 {
   if (!isEn)
   {

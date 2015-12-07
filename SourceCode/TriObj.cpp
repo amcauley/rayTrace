@@ -154,9 +154,9 @@ TriObj::TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s) :
       }
     }
 
-#ifndef USE_CACHE_BETA     
+#ifdef USE_CACHE_BETA     
     /* Cache the file for future usage. */
-    export(cachedFileName);
+    exportTriObj(cachedFileName);
 #endif    
   } //End non-cached case 
 
@@ -270,7 +270,7 @@ void TriObj::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
 
 
 /* Serialize this TriObj so we can quickly read it back in later program instances. */
-void TriObj::export(std::string fileName)
+void TriObj::exportTriObj(std::string fileName)
 {
   std::cout << "Exporting " << fileName << "...\n";
   /* .tcf = TriObj Cached File */

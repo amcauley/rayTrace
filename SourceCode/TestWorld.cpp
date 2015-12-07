@@ -122,7 +122,7 @@ void TestWorld::runTest(void)
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
       dbgPixLog.storeInfo(this, activePixel->rgb);
-      dbgPixLog.export(this, "Output/dbgPixLog.txt");
+      dbgPixLog.exportDbg(this, "Output/dbgPixLog.txt");
 #endif
     }
   }

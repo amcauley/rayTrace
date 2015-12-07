@@ -34,7 +34,7 @@ class TriObj : public Object {
     virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
 
     /* Export/Import functions for caching the TriObj. Otherwise load times can be rather long. */
-    void export(std::string fileName);
+    void exportTriObj(std::string fileName);
     void import(std::string fileName);
 };
 

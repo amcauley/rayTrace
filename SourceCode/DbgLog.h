@@ -39,7 +39,7 @@ class DbgPixLog {
     void nextLvl(RayTypes_t nextPath);
     void restoreLvl(void);
     void storeInfo(const Object* obj, Rgb& rgbValue);
-    void export(const TestWorld* environment, const std::string fileName);
+    void exportDbg(const TestWorld* environment, const std::string fileName);
     void writeDbgEntry(std::ofstream& fs, LogNode& logNode);
     void writeLogLayer(std::ofstream& fs, int depth, int& idx);
 };
