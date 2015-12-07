@@ -54,3 +54,5 @@ Debug/vc140.idb
 *.pdb
 Output/rayTraceOutput.bmp
 *.bak
+Output/dragonHighRes.bmp
+*.bmp

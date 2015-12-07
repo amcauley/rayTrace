@@ -1,7 +1,7 @@
-#include "Sphere.h"
+#include "Sphere.hpp"
 #include <assert.h>
-#include "DbgLog.h"
-#include "ObjCommon.h"
+#include "DbgLog.hpp"
+#include "ObjCommon.hpp"
 
 Sphere::Sphere() {};
 

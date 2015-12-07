@@ -1,5 +1,5 @@
-#include "Pixel.h"
-#include "Bitmap.h"
+#include "Pixel.hpp"
+#include "Bitmap.hpp"
 #include <assert.h>
 #include <algorithm>
 

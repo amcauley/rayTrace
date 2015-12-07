@@ -2,7 +2,7 @@
 #ifndef AABBTREE_H
 #define AABBTREE_H
 
-#include "AABB.h"
+#include "AABB.hpp"
 
 class Aabb3dNode {
 public:

@@ -1,4 +1,4 @@
-#include "AabbTree.h"
+#include "AabbTree.hpp"
 #include <assert.h>
 
 Aabb3dNode::Aabb3dNode() :

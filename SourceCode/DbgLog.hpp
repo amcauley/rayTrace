@@ -3,10 +3,10 @@
 #define DBGLOG_H
 
 #include <vector>
-#include "Rgb.h"
-#include "Params.h"
-#include "Object.h"
-#include "TestWorld.h"
+#include "Rgb.hpp"
+#include "Params.hpp"
+#include "Object.hpp"
+#include "TestWorld.hpp"
 
 typedef enum
 {

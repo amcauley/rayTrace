@@ -1,7 +1,7 @@
-#include "Triangle.h"
-#include "DbgLog.h"
+#include "Triangle.hpp"
+#include "DbgLog.hpp"
 #include <assert.h>
-#include "ObjCommon.h"
+#include "ObjCommon.hpp"
 
 Triangle::Triangle() {}
 

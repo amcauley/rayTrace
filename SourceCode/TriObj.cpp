@@ -1,12 +1,12 @@
-#include "TriObj.h"
-#include "DbgLog.h"
+#include "TriObj.hpp"
+#include "DbgLog.hpp"
 #include <assert.h>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "ObjCommon.h"
+#include "ObjCommon.hpp"
 #include <queue>
-#include "Util.h"
+#include "Util.hpp"
 
 /* Helper function to get the name of the triObj from the input filename. If the input filename is something like
    x/y/z/<name>.txt, we'll return <name>. */

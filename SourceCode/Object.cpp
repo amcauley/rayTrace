@@ -1,8 +1,8 @@
 
 #include <assert.h>
-#include "Object.h"
-#include "Params.h"
-#include "TestWorld.h"
+#include "Object.hpp"
+#include "Params.hpp"
+#include "TestWorld.hpp"
 
 Object::Object() {};
 Object::~Object() 

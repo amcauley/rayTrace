@@ -1,5 +1,5 @@
-#include "Physics.h"
-#include "Params.h"
+#include "Physics.hpp"
+#include "Params.hpp"
 #include <math.h>
 #include <iostream>
 #include <assert.h>

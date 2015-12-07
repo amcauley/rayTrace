@@ -1,4 +1,4 @@
-#include "Ray.h"
+#include "Ray.hpp"
 
 Ray::Ray(Vec3& loc, Vec3& vec, int d, float dist2):
   loc3(loc),

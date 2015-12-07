@@ -9,11 +9,11 @@ class AABB;
 #include <iostream>
 
 #include <vector>
-#include "Pixel.h"
-#include "Ray.h"
+#include "Pixel.hpp"
+#include "Ray.hpp"
 #include <math.h> //should go after Params.h to get the benefit of _USE_MATH_DEFINES
-#include "Physics.h"
-#include "AABB.h"
+#include "Physics.hpp"
+#include "AABB.hpp"
 
 class Object {
   public:

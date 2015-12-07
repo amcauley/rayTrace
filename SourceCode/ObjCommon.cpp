@@ -1,4 +1,4 @@
-#include "ObjCommon.h"
+#include "ObjCommon.hpp"
 
 float commonReflRefr(bool runRefl, bool runRefr, Object** srcList, Ray& ray, Object& callingObj, Vec3& normVec, float ior, Rgb& outRgbRefl, Rgb& outRgbRefr)
 {

@@ -1,6 +1,6 @@
-#include "Plane.h"
-#include "DbgLog.h"
-#include "ObjCommon.h"
+#include "Plane.hpp"
+#include "DbgLog.hpp"
+#include "ObjCommon.hpp"
 
 Plane::Plane() {}
 

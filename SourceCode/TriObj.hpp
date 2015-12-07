@@ -2,8 +2,8 @@
 #ifndef TRIOBJ_H
 #define TRIOBJ_H
 
-#include "Triangle.h"
-#include "AabbTree.h"
+#include "Triangle.hpp"
+#include "AabbTree.hpp"
 
 class TriObj : public Object {
   public:

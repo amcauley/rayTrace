@@ -2,8 +2,8 @@
 #ifndef TESTWORLD_H
 #define TESTWORLD_H
 
-#include "Object.h"
-#include "AabbTree.h"
+#include "Object.hpp"
+#include "AabbTree.hpp"
 
 /* NOTES:
   This is the class that contains all other objects. It's responsible for actually running the simulation. The main

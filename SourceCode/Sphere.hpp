@@ -2,7 +2,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "Object.h"
+#include "Object.hpp"
 
 class Sphere : public Object {
 public:

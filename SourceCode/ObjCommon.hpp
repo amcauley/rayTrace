@@ -2,7 +2,7 @@
 #ifndef OBJCOMMON_H
 #define OBJCOMMON_H
 
-#include "Object.h"
+#include "Object.hpp"
 
 /* Some routines commonly used by multiple objects. */
 

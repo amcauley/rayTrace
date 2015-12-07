@@ -1,12 +1,12 @@
-#include "SceneParser.h"
+#include "SceneParser.hpp"
 #include <assert.h>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "LightSources.h"
-#include "Plane.h"
-#include "Triangle.h"
-#include "TriObj.h"
+#include "LightSources.hpp"
+#include "Plane.hpp"
+#include "Triangle.hpp"
+#include "TriObj.hpp"
 
 void sceneParser(std::string fileName, Object*** objs, int* nObj, Object*** srcs, int* nSrc, Image** img, Vec3** eye)
 {

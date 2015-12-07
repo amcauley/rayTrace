@@ -2,7 +2,7 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include "Object.h"
+#include "Object.hpp"
 
 class Plane : public Object {
 public:

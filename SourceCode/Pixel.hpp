@@ -3,8 +3,8 @@
 #define PIXEL_H
 
 #include <iostream>
-#include "Vec3.h"
-#include "Rgb.h"
+#include "Vec3.hpp"
+#include "Rgb.hpp"
 
 class Pixel {
   public:

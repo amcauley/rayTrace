@@ -3,7 +3,7 @@
 #define BITMAP_H
 
 #include <stdint.h>
-#include "Pixel.h"
+#include "Pixel.hpp"
 
 /* Define structures. */
 typedef struct {      //file header

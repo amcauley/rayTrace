@@ -3,8 +3,8 @@
 #define AABB_H
 
 #include <vector>
-#include "Ray.h"
-#include "Object.h"
+#include "Ray.hpp"
+#include "Object.hpp"
 
 typedef enum {
   AXIS_X_ENUM = 0,

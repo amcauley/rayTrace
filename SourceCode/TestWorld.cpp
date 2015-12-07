@@ -1,5 +1,5 @@
-#include "TestWorld.h"
-#include "DbgLog.h"
+#include "TestWorld.hpp"
+#include "DbgLog.hpp"
 
 TestWorld::TestWorld(Object** obj, int nObjs, Object** src, int nSrcs, Vec3& ey, Image* image, float i):
   objects(obj),

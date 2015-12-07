@@ -1,4 +1,4 @@
-#include "Params.h"
+#include "Params.hpp"
 #include <stdlib.h>
 
 #ifdef DEBUG_MEM_LEAK_REPORT
@@ -11,11 +11,11 @@
 #define _CRTDBG_MAP_ALLOC
 #endif
 
-#include "LightSources.h"
-#include "TestWorld.h"
-#include "Sphere.h"
-#include "Plane.h"
-#include "SceneParser.h"
+#include "LightSources.hpp"
+#include "TestWorld.hpp"
+#include "Sphere.hpp"
+#include "Plane.hpp"
+#include "SceneParser.hpp"
 
 /* TOP LEVEL TODO (9/26):
      

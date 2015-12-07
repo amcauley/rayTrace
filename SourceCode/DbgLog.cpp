@@ -1,4 +1,4 @@
-#include "DbgLog.h"
+#include "DbgLog.hpp"
 #include <assert.h>
 #include <fstream>
 #include <iostream>

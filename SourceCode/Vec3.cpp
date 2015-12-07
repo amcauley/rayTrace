@@ -1,6 +1,6 @@
 #include <math.h>
 #include <iostream>
-#include "Vec3.h"
+#include "Vec3.hpp"
 #include <algorithm>
 
 Vec3::Vec3()

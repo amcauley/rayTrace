@@ -1,5 +1,5 @@
-#include "LightSources.h"
-#include "DbgLog.h"
+#include "LightSources.hpp"
+#include "DbgLog.hpp"
 
 void SimpleSource::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
 {

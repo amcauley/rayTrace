@@ -2,7 +2,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
-#include "Params.h"
+#include "Params.hpp"
 
 class Vec3 {
   public:

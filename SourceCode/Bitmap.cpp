@@ -1,6 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include "Bitmap.h"
+#include "Bitmap.hpp"
 #include <algorithm>
 #include <assert.h>
 

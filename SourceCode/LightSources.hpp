@@ -2,7 +2,7 @@
 #ifndef LIGHTSOURCES_H
 #define LIGHTSOURCES_H
 
-#include "Sphere.h"
+#include "Sphere.hpp"
 
 /* NOTES:
     Light source is a type of object.

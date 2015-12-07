@@ -2,9 +2,9 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "Object.h"
-#include "Vec3.h"
-#include "Ray.h"
+#include "Object.hpp"
+#include "Vec3.hpp"
+#include "Ray.hpp"
 
 class Triangle : public Object {
   public:
