@@ -17,7 +17,7 @@
 #include "Plane.hpp"
 #include "SceneParser.hpp"
 
-/* TOP LEVEL TODO (9/26):
+/* TOP LEVEL TODO:
      
     - Caching doesn't take into account changing locations / tree depths / etc. between runs.
 

@@ -1,6 +1,6 @@
-SCENE_PATH Z:\Documents\Visual Studio 2015\Projects\Project1\Project1\GUI/../Scenes/TriObj1.txt
+SCENE_PATH Z:\Documents\Visual Studio 2015\Projects\Project1\Project1\GUI/../Scenes/BunnyScene.txt
 OUTPUT_IMG Z:\Documents\Visual Studio 2015\Projects\Project1\Project1\GUI/../Output/rayTraceOutput.bmp
-MAX_RAY_DEPTH 1
+MAX_RAY_DEPTH 2
 PARAM_LIN_SUPERSAMPLE_FACTOR 1
 TOP_LEVEL_OBJECT_TREE_DEPTH 3
 TRI_TREE_DEPTH 5

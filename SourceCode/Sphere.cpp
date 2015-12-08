@@ -63,6 +63,7 @@ void Sphere::checkRayHit(Ray& ray, Vec3** hitPtr)
     }
   }
 
+  /* Fall through to here : Either no intersection, or the intersection was in the reverse direction (tt < 0). */
   *hitPtr = NULL;
 }
 

@@ -1,0 +1,14 @@
+/* Image: I locX locY locZ w h pixW pixH normX normY normZ */
+I -2.0 2.0 -2.0 400 400 .01 .01 0.0 0.0 1.0
+
+/* Eye: E locX locY locZ */
+E 0.0 0.0 -50.0
+
+/* Simple Source: SS locX locY locZ rad R G B indRef totScale shadScale mirScale glasScale ambScale */  
+SS 1.5 1.5 -60 0.25 200 200 200 1.0 1.0 0.0 0.0 0.0 0.0
+
+/* Triangle Test: TR x1 y1 z1 x2 y2 z2 x3 y3 z3 R G B totScale shadScale mirScale glasScale ambScale */
+//TR -2.0 2.0 0.0 2.0 2.0 0.0 2.0 -2.0 0.0 255 255 200 1.50 0.05 0.3 0.3 0.1
+
+/* PicFrame: PF x1 y1 z1 x2 y2 z2 x3 y3 z3 <bmp fileName>*/ 
+PF 0.0 0.0 0.0 1.0 0.0 0.0 1.0 -1.0 0.0 blahblahblah.bmp
