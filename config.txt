@@ -1,4 +1,4 @@
-SCENE_PATH Z:\Documents\Visual Studio 2015\Projects\Project1\Project1\GUI/../Scenes/BunnyScene.txt
+SCENE_PATH Z:\Documents\Visual Studio 2015\Projects\Project1\Project1\GUI/../Scenes/PicFrame.txt
 OUTPUT_IMG Z:\Documents\Visual Studio 2015\Projects\Project1\Project1\GUI/../Output/rayTraceOutput.bmp
 MAX_RAY_DEPTH 2
 PARAM_LIN_SUPERSAMPLE_FACTOR 1

@@ -49,7 +49,7 @@ void writePixelsToBmp24(std::string fileName, Pixel* pixArray, int w, int h)
   to get around this. Could also prob use some compiler directive/pragma to force alignment
   behavior, but that doesn't sound very portable. */
 
-  head.type = 19778;
+  head.type = BMP_FILE_ID;
   head.size = 54 + rowSizeBytes*h;
   head.reserved1 = 0;
   head.reserved2 = 0;
@@ -127,4 +127,74 @@ void writePixelsToBmp24(std::string fileName, Pixel* pixArray, int w, int h)
   }
 
   fs.close();
+}
+
+
+void readPixelsFromBmp24(const char* file, Rgb **RGBarray, int *width, int *height)
+{
+  /* Take in 24bit bmp and output array of Rgb values. This code adapted from an earlier C project. Would probably be
+     good to convert this to C++ later just for consistency with the rest of this codebase. */
+
+  /* declare variables */
+  FILE *fpin;           //file pointer
+  BMP_HEADER header;    //file header
+  BMP_INFO_HEADER info; //info header
+  BMP_PIXEL pixel;      //pixel struct
+  long int i, n;   //loop counters
+
+  /* open input file in binary mode */
+  if ((fpin = fopen(file, "rb")) == NULL) {
+    printf("Cannot open file %s.\n", file);
+    return;
+  }
+
+  /* read and display header info */
+  /* NOTE: Since some compilers force BMP_HEADER struct to be 16 bytes
+     (multiple of 4) instead of 14 bytes, read data into each FILE_HEADER
+     element individually. */
+
+  fread(&header.type, sizeof(header.type), 1, fpin);
+  fread(&header.size, sizeof(header.size), 1, fpin);
+  fread(&header.reserved1, sizeof(header.reserved1), 1, fpin);
+  fread(&header.reserved2, sizeof(header.reserved2), 1, fpin);
+  fread(&header.offset, sizeof(header.offset), 1, fpin);
+  fread(&info, sizeof(BMP_HEADER), 1, fpin);
+
+  /* make sure file is a 24 bit bitmap */
+  if (header.type != BMP_FILE_ID)
+  {
+    printf("\nFile is not a 24 bit bitmap.\n");
+    return;
+  }
+
+  /* allocate memory for data - must be unallocated by calling function. */
+  *RGBarray = new Rgb[info.height*info.width];
+
+  /* begin reading data. */
+  fseek(fpin, header.offset, SEEK_SET); //set file position to beginning of image data
+
+  for (i = info.height-1; i >= 0; i--)       //iterate through pixel rows keeping in mind BMP data starts lower left corner of image
+  {
+    for (n = 0; n < info.width; n++)        //read each pixel in a row
+    {
+      fread(&pixel, sizeof(pixel), 1, fpin);
+      (*RGBarray)[i*info.width + n].r = pixel.red;
+      (*RGBarray)[i*info.width + n].g = pixel.green;
+      (*RGBarray)[i*info.width + n].b = pixel.blue;
+    }
+
+    if ((info.width * 3) % 4 != 0)        //absorb padding bytes at the end of each row
+    {
+      for (n = 0; n < 4 - (info.width * 3) % 4; n++)
+      {
+        fread(&pixel.blue, sizeof(pixel.blue), 1, fpin);  //pixel.blue used because it is the correct size			
+      }
+    }
+  }
+
+  *width = info.width;
+  *height = info.height;
+
+  /* close file */
+  fclose(fpin);
 }

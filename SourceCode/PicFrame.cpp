@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "ObjCommon.hpp"
 #include <algorithm>
+#include "Bitmap.hpp"
 
 PicFrame::PicFrame() {}
 
@@ -18,15 +19,25 @@ PicFrame::PicFrame(std::string bmpName, Vec3 pt1, Vec3 pt2, Vec3 pt3) :
   pts{ pt1, pt2, pt3 },
   bmpName(bmpName)
 {
-  
-  /* Read in size and pixel info, then allocate pixel array. */
-  rgbVals = new Rgb[1];
+  /* Read in size and pixel info and create pixel array from bitmap image. */
+  readPixelsFromBmp24(bmpName.c_str(), &rgbVals, &bmpWidth, &bmpHeight);
 
   /* Find the fourth vertex of the frame given the first 3 (which are given in clockwise order from "top left" corner). */
   Vec3 pt4 = pt3 + (pt1 - pt2);
 
-  tris[0] = Triangle(pt1, pt2, pt3, Rgb(0, 0, 0), ScaleParams());
-  tris[1] = Triangle(pt3, pt4, pt1, Rgb(0, 0, 0), ScaleParams());
+
+  /* Form the rectangle by overlapping two oversized right triangles such that their intersection forms a rectangle.
+     Example ASCII art of one such traingle and the rectangular region inside it that it'll be used to form:
+      *\
+      | \
+      |  \
+      *---*
+      |   | \
+      *---*--*
+  */
+
+  tris[0] = Triangle(pt1*2 - pt2, pt2, pt3*2 - pt2, Rgb(0, 0, 0), ScaleParams());
+  tris[1] = Triangle(pt3*2 - pt4, pt4, pt1*2 - pt4, Rgb(0, 0, 0), ScaleParams());
 
   float a, b, minX, maxX, minY, maxY, minZ, maxZ;
 
@@ -65,20 +76,16 @@ PicFrame::PicFrame(std::string bmpName, Vec3 pt1, Vec3 pt2, Vec3 pt3) :
 
 void PicFrame::checkRayHit(Ray& ray, Vec3** hitPtr)
 {
-  /* To check if PicFrame is hit, check if either of the triangles that it's made of are hit. */
-
-  Vec3* tempPtr = *hitPtr;
+  /* To check if PicFrame is hit, check if both of the triangles that it's made of are hit. The intersection of these
+     Triangles is a rectangle (the PicFrame border). */
 
   /* First check first triangle. If we hit, then *hitPtr will be non-NULL. Else we'll check the second triangle. */
   tris[0].checkRayHit(ray, hitPtr);
 
-  if (*hitPtr == NULL)
+  if (*hitPtr != NULL)
   {
-    /* First restore original ptr so we don't derefence NULL. */
-    *hitPtr = tempPtr;
     tris[1].checkRayHit(ray, hitPtr);
   }
-
 }
 
 void PicFrame::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc)
@@ -92,5 +99,5 @@ void PicFrame::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcL
   int pW = std::min((int)(widthPercent*bmpWidth), bmpWidth - 1); //take Min to guard against unlikely case of widthPercent >= 1.0f
   int pH = std::min((int)(heightPercent*bmpHeight), bmpHeight - 1); //take Min to guard against unlikely case of widthPercent >= 1.0f
 
-  outRgb = Rgb(1.0f, 1.0f, 1.0f);//rgbVals[pH*bmpWidth + pW];
+  outRgb = rgbVals[pH*bmpWidth + pW]; //Rgb(1.0f, 1.0f, 1.0f);
 }

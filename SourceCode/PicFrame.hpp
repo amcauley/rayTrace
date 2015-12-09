@@ -25,8 +25,9 @@ public:
   /* Array of RGB values corresponding to the image. */
   Rgb *rgbVals;
 
-  /* Triangles used to create the rectangular frame. The two triangles correspond to those created by splitting the rectangular
-     frame from one vertex to the opposite. */
+  /* Triangles used to create the rectangular frame. The two triangles are right angled, where the right angles form opposite
+     corners of the rectangular frame, and the overlap region is the rectangle. This method is used instead of combining two
+     rectangles formed by diagonally dividing the rectangle since the diagonal forms a seam which doesn't render nicely. */
   Triangle tris[2];
 
   /* Vectors defining the top edge (horizontal) and right edge (vertical) of the frame. */
