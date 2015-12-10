@@ -76,7 +76,7 @@ void sceneParser(std::string fileName, Object*** objs, int* nObj, Object*** srcs
       ++*nObj;
       std::cout << "TriObj detected \n";
     }
-    else if (curWord == "PF") /* PicFrame: PF x1 y1 z1 x2 y2 z2 x3 y3 z3 <bmp fileName> */
+    else if (curWord == "PF") /* PicFrame: PF x1 y1 z1 x2 y2 z2 x3 y3 z3 indRef totScale shadScale mirScale glasScale ambScale <bmp fileName> */
     {
       ++*nObj;
       std::cout << "PicFrame detected \n";
@@ -143,15 +143,15 @@ void sceneParser(std::string fileName, Object*** objs, int* nObj, Object*** srcs
       (*objs)[curObj++] = new TriObj(triObjPath, Vec3(x, y, z), Rgb(R, G, B)*(1.0f / 255.0f), indRef, ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
       std::cout << "TriObj created \n";
     }
-    else if (curWord == "PF") /* PicFrame: PF x1 y1 z1 x2 y2 z2 x3 y3 z3 <bmp fileName> */
+    else if (curWord == "PF") /* PicFrame: PF x1 y1 z1 x2 y2 z2 x3 y3 z3 indRef totScale shadScale mirScale glasScale ambScale <bmp fileName> */
     {
       std::string imagePath;
-      float x1, y1, z1, x2, y2, z2, x3, y3, z3;
-      lineStream >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3;
+      float x1, y1, z1, x2, y2, z2, x3, y3, z3, indRef, totScale, shadScale, mirScale, glasScale, ambScale;
+      lineStream >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3 >> indRef >> totScale >> shadScale >> mirScale >> glasScale >> ambScale;
       while (lineStream.peek() == ' ') lineStream.get(); //eat leading whitespace
       std::getline(lineStream, imagePath);
       std::cout << "Creating PicFrame: " << imagePath << std::endl;
-      (*objs)[curObj++] = new PicFrame(imagePath, Vec3(x1, y1, z1), Vec3(x2, y2, z2), Vec3(x3, y3, z3));
+      (*objs)[curObj++] = new PicFrame(imagePath, Vec3(x1, y1, z1), Vec3(x2, y2, z2), Vec3(x3, y3, z3), indRef, ScaleParams(totScale, shadScale, mirScale, glasScale, ambScale));
       std::cout << "PicFrame created \n";
     }
     else /* Default case: */

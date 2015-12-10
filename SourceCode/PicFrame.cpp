@@ -15,7 +15,8 @@ PicFrame::~PicFrame()
 }
 
 /* Assume that the points aren't colinear - don't want to spend the cycles checking. */
-PicFrame::PicFrame(std::string bmpName, Vec3 pt1, Vec3 pt2, Vec3 pt3) :
+PicFrame::PicFrame(std::string bmpName, Vec3 pt1, Vec3 pt2, Vec3 pt3, float i, ScaleParams s) :
+  Object(Vec3(0, 0, 0), Rgb(0, 0, 0), i, s),
   pts{ pt1, pt2, pt3 },
   bmpName(bmpName)
 {
@@ -72,6 +73,10 @@ PicFrame::PicFrame(std::string bmpName, Vec3 pt1, Vec3 pt2, Vec3 pt3) :
 
   imgWidth = sqrt(widthVec.mag2());
   imgHeight = sqrt(heightVec.mag2());
+
+  /* Now normalize vectors so future dot products are simplified. */
+  widthVec.normalize();
+  heightVec.normalize();
 }
 
 void PicFrame::checkRayHit(Ray& ray, Vec3** hitPtr)
@@ -99,5 +104,56 @@ void PicFrame::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcL
   int pW = std::min((int)(widthPercent*bmpWidth), bmpWidth - 1); //take Min to guard against unlikely case of widthPercent >= 1.0f
   int pH = std::min((int)(heightPercent*bmpHeight), bmpHeight - 1); //take Min to guard against unlikely case of widthPercent >= 1.0f
 
-  outRgb = rgbVals[pH*bmpWidth + pW]; //Rgb(1.0f, 1.0f, 1.0f);
+
+  /* Default rgb to the pixel value. */
+  Rgb thisRgb = rgbVals[pH*bmpWidth + pW];
+  outRgb = thisRgb*sParams.ambientScale; //Rgb(1.0f, 1.0f, 1.0f);
+
+#ifdef DEBUG_GEN_PIXEL_REPORT
+  dbgPixLog.nextLvl(RAY_TYPE_AMBIENT);
+  dbgPixLog.storeInfo(this, thisRgb);
+  dbgPixLog.restoreLvl();
+#endif
+
+  /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
+  if (ray.depth >= MAX_RAY_DEPTH)
+  {
+    return;
+  }
+
+  /*~~~~~~~~~~ Reflection (Mirror) / Refraction (Glass, not applicable to PicFrame) Ray Proc ~~~~~~~~~~*/
+  /* We want PicFrame to be hittable from either face, so flip the normal vector (and offset direction) if needed. */
+  Vec3 tempNorm = tris[0].norm;
+  if (tempNorm.dot(ray.vec3) > 0.0f)
+  {
+    tempNorm = tempNorm*(-1.0f);
+  }
+
+  float mScale;
+  mScale = sParams.mirrorScale;
+
+  bool runM;
+  runM = mScale > 0.0f;
+
+  if (runM)
+  {
+    float R;
+    Rgb reflRgb, refrRgb;
+
+    R = commonReflRefr(runM, false, srcList, ray, callingObj, tempNorm, ior, reflRgb, refrRgb);
+
+    outRgb = outRgb + reflRgb*R*mScale;
+  }
+
+  /*~~~~~~~~~~ Shadow Ray Proc ~~~~~~~~~~*/
+  if (sParams.shadowScale > 0.0f)
+  {
+    Rgb tempRgb;
+    float scale;
+    scale = commonShadowTrace(srcList, ray, callingObj, tempNorm, tempRgb);
+    if (scale > 0.0f)
+    {
+      outRgb = outRgb + tempRgb*(sParams.shadowScale*scale);
+    }
+  }
 }

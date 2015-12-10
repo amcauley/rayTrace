@@ -35,7 +35,7 @@ public:
 
   PicFrame();
   ~PicFrame();
-  PicFrame(std::string bmpName, Vec3 pt1, Vec3 pt2, Vec3 pt3);
+  PicFrame(std::string bmpName, Vec3 pt1, Vec3 pt2, Vec3 pt3, float i, ScaleParams s);
 
   virtual void checkRayHit(Ray& ray, Vec3** hitPtr);
   virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);

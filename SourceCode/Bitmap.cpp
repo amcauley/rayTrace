@@ -140,7 +140,8 @@ void readPixelsFromBmp24(const char* file, Rgb **RGBarray, int *width, int *heig
   BMP_HEADER header;    //file header
   BMP_INFO_HEADER info; //info header
   BMP_PIXEL pixel;      //pixel struct
-  long int i, n;   //loop counters
+  long int i;           //loop counter
+  unsigned long n;      //loop counter
 
   /* open input file in binary mode */
   if ((fpin = fopen(file, "rb")) == NULL) {
@@ -178,9 +179,9 @@ void readPixelsFromBmp24(const char* file, Rgb **RGBarray, int *width, int *heig
     for (n = 0; n < info.width; n++)        //read each pixel in a row
     {
       fread(&pixel, sizeof(pixel), 1, fpin);
-      (*RGBarray)[i*info.width + n].r = pixel.red;
-      (*RGBarray)[i*info.width + n].g = pixel.green;
-      (*RGBarray)[i*info.width + n].b = pixel.blue;
+      (*RGBarray)[i*info.width + n].r = pixel.red / 255.0f; //scale to range [0, 1] used elsewhere in project.
+      (*RGBarray)[i*info.width + n].g = pixel.green / 255.0f;
+      (*RGBarray)[i*info.width + n].b = pixel.blue / 255.0f;
     }
 
     if ((info.width * 3) % 4 != 0)        //absorb padding bytes at the end of each row

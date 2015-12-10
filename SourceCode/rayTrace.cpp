@@ -18,6 +18,9 @@
 #include "SceneParser.hpp"
 
 /* TOP LEVEL TODO:
+
+    - Look into streaking in tilted horizontal plane near far edge with reflections - maybe rounding error, possibly kill rays all together
+      if they get too far away from eye.
      
     - Caching doesn't take into account changing locations / tree depths / etc. between runs.
 
@@ -30,8 +33,6 @@
     - FOV as a parameter instead of manually setting image/eye params.
 
     - Multiple sources
-
-    - Pictures - let planes display bitmap images.
 */
 
 int main()

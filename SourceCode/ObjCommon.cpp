@@ -31,7 +31,7 @@ float commonReflRefr(bool runRefl, bool runRefr, Object** srcList, Ray& ray, Obj
     callingObj.traceRay(mirrorRay, outRgbRefl, callingObj, srcList, 1);
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
-    dbgPixLog.storeInfo(this, tempRgb);
+    //dbgPixLog.storeInfo(this, tempRgb); //Needs testing/modification for ObjCommon implementation
     dbgPixLog.restoreLvl();
 #endif
   }
@@ -59,7 +59,7 @@ float commonReflRefr(bool runRefl, bool runRefr, Object** srcList, Ray& ray, Obj
       callingObj.traceRay(glassRay, outRgbRefr, callingObj, srcList, 1);
 
 #ifdef DEBUG_GEN_PIXEL_REPORT
-      dbgPixLog.storeInfo(this, tempRgb);
+      //dbgPixLog.storeInfo(this, tempRgb); //Needs testing/modification for ObjCommon implementation
       dbgPixLog.restoreLvl();
 #endif
     }
