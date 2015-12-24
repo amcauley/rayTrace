@@ -20,11 +20,16 @@ class TriObj : public Object {
        variable is meaningless. Note: should look into whether it's actually possible that the triTree base ptr is
        different from this address due to C++ padding magic. If not, this entry is redundant. */
     Aabb3dNode* nodeArrayPtr;
+#ifndef EN_PARALLEL_PROC
     /* The closest object/triangle discovered during the previous call to checkRayHit. This prevents us
        from needing to search the kd triangle tree twice - once during checkRayHit and then later during
        traceRay (so we can get the normal vector for the hit triangle). The assumption here is that checkRayHit
-       will always be called just before traceRay for that same triangle. */
+       will always be called just before traceRay for that same triangle. 
+    
+       NOT THREADSAFE!
+    */
     Triangle* hitTriPtr;
+#endif
 
     TriObj();
     TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s);

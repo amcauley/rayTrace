@@ -160,7 +160,9 @@ TriObj::TriObj(std::string fileName, Vec3& a, Rgb& c, float i, ScaleParams s) :
 #endif    
   } //End non-cached case 
 
+#ifndef EN_PARALLEL_PROC
   hitTriPtr = NULL;
+#endif
 }
 
 TriObj::~TriObj()
@@ -198,7 +200,11 @@ void TriObj::checkRayHit(Ray& ray, Vec3** hitPtr)
   {
     Object* currTriPtr = hitObjs[0];
     float minDist2Tri2 = (hitPts[0] - ray.loc3).mag2();
+#ifdef EN_PARALLEL_PROC
+    ray.lastHitObj = ray.lastHitSubObj = currTriPtr;
+#else
     hitTriPtr = dynamic_cast<Triangle*>(currTriPtr);
+#endif
     **hitPtr = hitPts[0];
     /* A source can't occlude itself from this sphere. List is NULL terminated. */
     for (int n = 1; n < nObj; ++n)
@@ -210,7 +216,11 @@ void TriObj::checkRayHit(Ray& ray, Vec3** hitPtr)
       {
         minDist2Tri2 = dist2Tri2;
         **hitPtr = hitPts[n];
+#ifdef EN_PARALLEL_PROC
+        ray.lastHitSubObj = currTriPtr;
+#else
         hitTriPtr = dynamic_cast<Triangle*>(currTriPtr);
+#endif
       }
     }
     return;
@@ -225,15 +235,19 @@ void TriObj::traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcLis
   /* Start with ambient contribution. */
   outRgb = rgb*sParams.ambientScale;
 
-  /* Latch the norm before we recurse into any other rays (which could call checkHitRay and
-     overwrite hitTriPtr. */
-  Vec3 triNorm = hitTriPtr->norm;
-
   /* If we're at max recursion depth, just exit now with the ambiant rgb value. */
   if (ray.depth >= MAX_RAY_DEPTH)
   {
     return;
   }
+
+#ifdef EN_PARALLEL_PROC
+  Vec3 triNorm = (dynamic_cast<Triangle*>(ray.lastHitSubObj))->norm;
+#else
+  /* Latch the norm before we recurse into any other rays (which could call checkHitRay and
+  overwrite hitTriPtr. */
+  Vec3 triNorm = hitTriPtr->norm;
+#endif
 
   /*~~~~~~~~~~ Reflection (Mirror) / Refraction (Glass) Ray Proc ~~~~~~~~~~*/
   float mScale, gScale;

@@ -28,8 +28,20 @@ extern unsigned int TOP_LEVEL_OBJECT_TREE_DEPTH;
 #define TRI_TREE_DEPTH_DEFAULT (8)
 extern unsigned int TRI_TREE_DEPTH ;
 
-/* Print out processing progress info. */
-#define STATUS_PRINTS_ENABLED
+/* Enable Parallel Processing. */
+#define EN_PARALLEL_PROC
+
+#ifdef EN_PARALLEL_PROC 
+  #define PARAM_N_THREADS_DEFAULT (2)
+  extern unsigned int PARAM_N_THREADS;
+#else //status updates not modified to support multiple thread processing yet.
+  /* Print out processing progress info. */
+  #define STATUS_PRINTS_ENABLED
+
+  /* Reverse order of pixels visited. Useful if debugging one of the later pixels under normal ordering.
+  NOTE: Status updates ("x% complete" messages) don't currently work correctly with this debug feature. */
+  //#define REVERSE_PIX_ORDER
+#endif
 
 /* Tolerance within each x,y,z Vec3 component must match those of a different
 Vec3 for the vectors to be considered equal. Accounts for floating point precision
@@ -39,16 +51,14 @@ issues. */
 /* Enable to create an output log tracing the RGB values leading to pixel (x,y)'s value.
    NOTE: debug log is stored globally, which may trigger false memory leak report. */
 //#define DEBUG_GEN_PIXEL_REPORT
+//NOTE! feature needs some updating since now debug logging can happen in common helper functions, "this" ptr doesn't make sense if not in class method. Undef for now.
+#undef DEBUG_GEN_PIXEL_REPORT
 
 /* Enable to mark the debug pixel white for easier locating. */
 //#define MARK_DEBUG_PIXEL
 
 #define DEBUG_PIXEL_REPORT_X (100)  //Pixel width coord
 #define DEBUG_PIXEL_REPORT_Y (100)  //Pixel height coord
-
-/* Reverse order of pixels visited. Useful if debugging one of the later pixels under normal ordering.
-   NOTE: Status updates ("x% complete" messages) don't currently work correctly with this debug feature. */
-//#define REVERSE_PIX_ORDER
 
 /* Disable image autoscaling. */
 //#define SKIP_IMAGE_AUTOSCALE

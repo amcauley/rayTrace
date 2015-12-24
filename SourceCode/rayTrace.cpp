@@ -19,6 +19,8 @@
 
 /* TOP LEVEL TODO:
 
+    - Update % done message logic for parallelized code
+
     - Look into streaking in tilted horizontal plane near far edge with reflections - maybe rounding error, possibly kill rays all together
       if they get too far away from eye.
      
@@ -34,6 +36,10 @@
 
     - Multiple sources
 */
+
+#ifdef EN_PARALLEL_PROC
+  TestWorld *par_proc_testWorld;
+#endif
 
 int main()
 {
@@ -56,6 +62,9 @@ int main()
     /* ~~~ Start rendering. ~~~ */
     std::cout << "Creating test world\n";
     TestWorld world = TestWorld(obj, nObj, src, nSrc, *eye, img, 1.0f);
+#ifdef EN_PARALLEL_PROC
+    par_proc_testWorld = &world;
+#endif
     world.runTest();
 
     /* Delete allocated objects and sources. */

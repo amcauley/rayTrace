@@ -12,6 +12,9 @@ std::string OUTPUT_IMG = OUTPUT_IMG_DEFAULT;
 unsigned int TOP_LEVEL_OBJECT_TREE_DEPTH = TOP_LEVEL_OBJECT_TREE_DEPTH_DEFAULT;
 unsigned int TRI_TREE_DEPTH = TRI_TREE_DEPTH_DEFAULT;
 unsigned int PARAM_LIN_SUPERSAMPLE_FACTOR = PARAM_LIN_SUPERSAMPLE_FACTOR_DEFAULT;
+#ifdef EN_PARALLEL_PROC
+  unsigned int PARAM_N_THREADS = PARAM_N_THREADS_DEFAULT;
+#endif
 
 void getParams(std::string fileName)
 {
@@ -71,6 +74,13 @@ void getParams(std::string fileName)
       lineStream >> PARAM_LIN_SUPERSAMPLE_FACTOR;
       std::cout << "PARAM_LIN_SUPERSAMPLE_FACTOR: " << PARAM_LIN_SUPERSAMPLE_FACTOR << std::endl;
     }
+#ifdef EN_PARALLEL_PROC
+    else if (curWord == "PARAM_N_THREADS")
+    {
+      lineStream >> PARAM_N_THREADS;
+      std::cout << "PARAM_N_THREADS: " << PARAM_N_THREADS << std::endl;
+    }
+#endif
     else /* Default case: */
     {
       continue;

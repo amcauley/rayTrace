@@ -25,6 +25,13 @@ public:
   virtual void traceRay(Ray& ray, Rgb& outRgb, Object& callingObj, Object** srcList, int nSrc);
   virtual void CheckRayHitExt(Ray& ray, std::vector<Object*> &hitObjs, std::vector<Vec3> &hitPts);
   void runTest(void);
+  void tracePixel(int pw, int ph);
 };
+
+#ifdef EN_PARALLEL_PROC
+  /* For parallel processing version of code, keep a globally visible pointer to TestWorld instance. For future, can look
+     into making TestWorld a singleton. */
+  extern TestWorld *par_proc_testWorld;
+#endif
 
 #endif //TESTWORLD_H
